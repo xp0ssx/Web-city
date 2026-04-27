@@ -1,0 +1,70 @@
+services:
+  postgis:
+    image: postgis/postgis:16-3.4
+    container_name: webcity-postgis
+    environment:
+      POSTGRES_DB: webcity
+      POSTGRES_USER: webcity
+      POSTGRES_PASSWORD: webcity
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U webcity -d webcity"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: webcity-api
+    environment:
+      HTTP_PORT: "8080"
+      DATABASE_DSN: "postgres://webcity:webcity@postgis:5432/webcity?sslmode=disable"
+    depends_on:
+      postgis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  updater:
+    profiles: ["tools"]
+    build:
+      context: ./updater
+      dockerfile: Dockerfile
+    container_name: webcity-updater
+    environment:
+      DB_HOST: postgis
+      DB_PORT: "5432"
+      DB_NAME: webcity
+      DB_USER: webcity
+      DB_PASSWORD: webcity
+      OSM_PBF_URL: "https://download.geofabrik.de/russia/central-fed-district-latest.osm.pbf"
+      OSM_PBF_FILE: "/data/central-fed-district-latest.osm.pbf"
+      OSM_EXTRACT_FILE: "/data/moscow-extract.osm.pbf"
+      OSM_EXTRACT_BBOX: "36.8481,55.3151,38.6760,56.2250"
+      OSM_EXTRACT_STRATEGY: "complete_ways"
+      OSM_MIN_BYTES: "50000000"
+      OSM_PREFIX: "osm"
+    volumes:
+      - osmdata:/data
+    depends_on:
+      postgis:
+        condition: service_healthy
+
+  frontend:
+    image: nginx:1.27-alpine
+    container_name: webcity-frontend
+    depends_on:
+      - api
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "8090:80"
+
+volumes:
+  pgdata:
+  osmdata:

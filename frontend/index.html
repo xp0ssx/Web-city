@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web-city Stage 1</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 16px;
+      line-height: 1.4;
+    }
+    button {
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 12px;
+      border-radius: 8px;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Web-city: проверка окружения</h1>
+  <p>Это стартовый экран. На следующем шаге сюда добавим карту Leaflet.</p>
+
+  <button id="check">Проверить API /healthz</button>
+  <pre id="out">Нажми кнопку для проверки...</pre>
+
+  <script>
+    const out = document.getElementById("out");
+    document.getElementById("check").addEventListener("click", async () => {
+      try {
+        const res = await fetch("http://localhost:8080/healthz");
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        out.textContent = "Ошибка запроса: " + e.message;
+      }
+    });
+  </script>
+</body>
+</html>
