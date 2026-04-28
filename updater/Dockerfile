@@ -1,3 +1,10 @@
+FROM golang:1.23-bookworm AS build
+
+WORKDIR /src
+COPY . .
+RUN go mod tidy
+RUN CGO_ENABLED=0 GOOS=linux go build -o /bin/updater .
+
 FROM debian:bookworm-slim
 
 RUN apt-get update \
@@ -13,4 +20,6 @@ WORKDIR /app
 COPY run-import.sh /app/run-import.sh
 RUN chmod +x /app/run-import.sh
 
-ENTRYPOINT [ "/app/run-import.sh" ]
+COPY --from=build /bin/updater /bin/updater
+
+ENTRYPOINT ["/bin/updater"]

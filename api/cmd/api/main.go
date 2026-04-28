@@ -11,6 +11,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"web-city/api/internal/handlers"
+	"web-city/api/internal/store"
 )
 
 type healthResponse struct {
@@ -36,6 +39,9 @@ func main() {
 		log.Fatalf("db ping error: %v", err)
 	}
 
+	dbStore := store.New(db)
+	tagsHandler := handlers.NewTagsHandler(dbStore)
+
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
@@ -44,7 +50,13 @@ func main() {
 	r.Use(corsMiddleware)
 
 	r.Get("/healthz", healthHandler(db))
-	r.Get("/api/v1/healthz", healthHandler(db))
+
+	r.Route("/api/v1/tags", func(r chi.Router) {
+		r.Get("/keys", tagsHandler.Keys)
+		r.Get("/values", tagsHandler.Values)
+	})
+
+	r.Get("/api/v1/features", tagsHandler.Features)
 
 	srv := &http.Server{
 		Addr:              ":" + port,

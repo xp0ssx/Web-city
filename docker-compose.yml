@@ -1,11 +1,11 @@
+name: ${COMPOSE_PROJECT_NAME}
 services:
   postgis:
     image: postgis/postgis:16-3.4
-    container_name: webcity-postgis
     environment:
-      POSTGRES_DB: webcity
-      POSTGRES_USER: webcity
-      POSTGRES_PASSWORD: webcity
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -20,10 +20,9 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-    container_name: webcity-api
     environment:
-      HTTP_PORT: "8080"
-      DATABASE_DSN: "postgres://webcity:webcity@postgis:5432/webcity?sslmode=disable"
+      HTTP_PORT: "${HTTP_PORT}"
+      DATABASE_DSN: "${DATABASE_DSN}"
     depends_on:
       postgis:
         condition: service_healthy
@@ -35,20 +34,22 @@ services:
     build:
       context: ./updater
       dockerfile: Dockerfile
-    container_name: webcity-updater
     environment:
-      DB_HOST: postgis
-      DB_PORT: "5432"
-      DB_NAME: webcity
-      DB_USER: webcity
-      DB_PASSWORD: webcity
-      OSM_PBF_URL: "https://download.geofabrik.de/russia/central-fed-district-latest.osm.pbf"
-      OSM_PBF_FILE: "/data/central-fed-district-latest.osm.pbf"
-      OSM_EXTRACT_FILE: "/data/moscow-extract.osm.pbf"
-      OSM_EXTRACT_BBOX: "36.8481,55.3151,38.6760,56.2250"
-      OSM_EXTRACT_STRATEGY: "complete_ways"
-      OSM_MIN_BYTES: "50000000"
-      OSM_PREFIX: "osm"
+      DB_HOST: ${DB_HOST}
+      DB_PORT: "${DB_PORT}"
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      OSM_PBF_URL: ${OSM_PBF_URL}
+      OSM_PBF_FILE: ${OSM_PBF_FILE}
+      OSM_PBF_MD5_URL: ${OSM_PBF_MD5_URL}
+      OSM_EXTRACT_FILE: ${OSM_EXTRACT_FILE}
+      OSM_EXTRACT_BBOX: ${OSM_EXTRACT_BBOX}
+      OSM_EXTRACT_STRATEGY: ${OSM_EXTRACT_STRATEGY}
+      OSM_MIN_BYTES: "${OSM_MIN_BYTES}"
+      OSM_PREFIX: ${OSM_PREFIX}
+      OSM_FORCE_DOWNLOAD: "${OSM_FORCE_DOWNLOAD}"
+      DATAMOS_API_KEY: ${DATAMOS_API_KEY}
     volumes:
       - osmdata:/data
     depends_on:
@@ -57,7 +58,6 @@ services:
 
   frontend:
     image: nginx:1.27-alpine
-    container_name: webcity-frontend
     depends_on:
       - api
     volumes:

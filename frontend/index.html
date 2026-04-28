@@ -3,45 +3,427 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Web-city Stage 1</title>
+  <title>Web-city Data Explorer</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
   <style>
-    body {
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
       font-family: sans-serif;
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 16px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      height: 100vh;
+    }
+
+    .sidebar {
+      padding: 16px;
+      border-right: 1px solid #ddd;
+      overflow: auto;
+      background: #f8fafc;
+    }
+
+    .sidebar h1 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #334155;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    button {
+      padding: 10px 12px;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .secondary {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .status {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #eef2ff;
+      color: #1e3a8a;
+      font-size: 13px;
       line-height: 1.4;
     }
-    button {
-      padding: 10px 16px;
-      cursor: pointer;
-    }
-    pre {
-      background: #f4f4f4;
-      padding: 12px;
-      border-radius: 8px;
+
+    .list {
+      margin-top: 12px;
+      max-height: 220px;
       overflow: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .item {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .item:last-child {
+      border-bottom: 0;
+    }
+
+    .item:hover {
+      background: #f8fafc;
+    }
+
+    .map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .small {
+      color: #64748b;
+      font-size: 12px;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin: 14px 0 8px;
+      color: #0f172a;
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .map {
+        min-height: 50vh;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Web-city: проверка окружения</h1>
-  <p>Это стартовый экран. На следующем шаге сюда добавим карту Leaflet.</p>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>Web-city</h1>
+      <div class="small">
+        Карта Москвы + запросы по тегам.  
+        Данные идут с API на <strong>http://localhost:8080</strong>.
+      </div>
 
-  <button id="check">Проверить API /healthz</button>
-  <pre id="out">Нажми кнопку для проверки...</pre>
+      <div class="field">
+        <label for="keyInput">Tag key</label>
+        <input id="keyInput" list="keysListData" placeholder="amenity" autocomplete="off" />
+        <datalist id="keysListData"></datalist>
+      </div>
 
+      <div class="field">
+        <label for="valueInput">Tag value</label>
+        <input id="valueInput" list="valuesListData" placeholder="school" autocomplete="off" />
+        <datalist id="valuesListData"></datalist>
+      </div>
+
+      <div class="field">
+        <label for="geometryInput">Geometry</label>
+        <select id="geometryInput">
+          <option value="point">point</option>
+          <option value="line">line</option>
+          <option value="polygon">polygon</option>
+          <option value="all" selected>all</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="limitInput">Limit</label>
+        <input id="limitInput" type="number" value="500" min="1" max="20000" />
+      </div>
+
+      <div class="buttons">
+        <button class="secondary" id="loadKeysBtn">Load keys</button>
+        <button class="secondary" id="loadValuesBtn">Load values</button>
+        <button class="primary" id="loadFeaturesBtn">Show objects</button>
+        <button class="secondary" id="clearBtn">Clear map</button>
+      </div>
+
+      <div class="status" id="statusBox">Ready.</div>
+
+      <div class="section-title">Tag keys</div>
+      <div class="list" id="keysBox"></div>
+
+      <div class="section-title">Values for key</div>
+      <div class="list" id="valuesBox"></div>
+    </aside>
+
+    <main id="map" class="map"></main>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
   <script>
-    const out = document.getElementById("out");
-    document.getElementById("check").addEventListener("click", async () => {
+    const API_BASE = "http://localhost:8080/api/v1";
+
+    const map = L.map("map").setView([55.751244, 37.618423], 10);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const layer = L.geoJSON(null, {
+      pointToLayer: (feature, latlng) => {
+        return L.circleMarker(latlng, {
+          radius: 6,
+          color: "#2563eb",
+          weight: 2,
+          fillColor: "#60a5fa",
+          fillOpacity: 0.8
+        });
+      },
+      style: (feature) => {
+        return {
+          color: "#7c3aed",
+          weight: 2,
+          fillColor: "#c4b5fd",
+          fillOpacity: 0.35
+        };
+      },
+      onEachFeature: (feature, leafletLayer) => {
+        const props = feature.properties || {};
+        const title = props.name || props.osm_id || "Object";
+        const tags = props.tags ? JSON.stringify(props.tags, null, 2) : "";
+
+        const popup = `
+          <div style="min-width:220px">
+            <div style="font-weight:700;margin-bottom:6px">${escapeHtml(String(title))}</div>
+            <div><strong>osm_id:</strong> ${escapeHtml(String(props.osm_id ?? ""))}</div>
+            <div style="margin-top:6px"><strong>tags:</strong></div>
+            <pre style="white-space:pre-wrap;font-size:12px;margin:6px 0 0">${escapeHtml(tags)}</pre>
+          </div>
+        `;
+
+        leafletLayer.bindPopup(popup);
+      }
+    }).addTo(map);
+
+    const statusBox = document.getElementById("statusBox");
+    const keysBox = document.getElementById("keysBox");
+    const valuesBox = document.getElementById("valuesBox");
+    const keysListData = document.getElementById("keysListData");
+    const valuesListData = document.getElementById("valuesListData");
+
+    const keyInput = document.getElementById("keyInput");
+    const valueInput = document.getElementById("valueInput");
+    const geometryInput = document.getElementById("geometryInput");
+    const limitInput = document.getElementById("limitInput");
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function setStatus(message) {
+      statusBox.textContent = message;
+    }
+
+    async function fetchJson(url) {
+      const response = await fetch(url, {
+        headers: {
+          Accept: "application/json"
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
+
+      return response.json();
+    }
+
+    function clearMap() {
+      layer.clearLayers();
+      setStatus("Map cleared.");
+    }
+
+    function renderList(container, data, fieldName, onClick) {
+      container.innerHTML = "";
+
+      if (!data.length) {
+        container.innerHTML = '<div class="item">No data</div>';
+        return;
+      }
+
+      data.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "item";
+        row.textContent = `${item[fieldName]} (${item.count})`;
+        row.addEventListener("click", () => onClick(item));
+        container.appendChild(row);
+      });
+    }
+
+    function renderDatalist(container, data, fieldName) {
+      container.innerHTML = "";
+      data.forEach((item) => {
+        const option = document.createElement("option");
+        option.value = item[fieldName];
+        container.appendChild(option);
+      });
+    }
+
+    async function loadKeys() {
+      setStatus("Loading tag keys...");
       try {
-        const res = await fetch("http://localhost:8080/healthz");
-        const data = await res.json();
-        out.textContent = JSON.stringify(data, null, 2);
-      } catch (e) {
-        out.textContent = "Ошибка запроса: " + e.message;
+        const data = await fetchJson(`${API_BASE}/tags/keys`);
+        renderList(keysBox, data, "key", (item) => {
+          keyInput.value = item.key;
+          loadValues();
+        });
+        renderDatalist(keysListData, data, "key");
+        setStatus(`Loaded ${data.length} keys.`);
+      } catch (error) {
+        setStatus(`Failed to load keys: ${error.message}`);
+      }
+    }
+
+    async function loadValues() {
+      const key = keyInput.value.trim();
+      if (!key) {
+        setStatus("Enter tag key first.");
+        return;
+      }
+
+      setStatus(`Loading values for ${key}...`);
+      try {
+        const data = await fetchJson(`${API_BASE}/tags/values?key=${encodeURIComponent(key)}`);
+        renderList(valuesBox, data, "value", (item) => {
+          valueInput.value = item.value;
+        });
+        renderDatalist(valuesListData, data, "value");
+        setStatus(`Loaded ${data.length} values for ${key}.`);
+      } catch (error) {
+        setStatus(`Failed to load values: ${error.message}`);
+      }
+    }
+
+    async function loadFeatures() {
+      const key = keyInput.value.trim();
+      const value = valueInput.value.trim();
+      const geometry = geometryInput.value;
+      const limit = Number(limitInput.value || 20000);
+
+      if (!key) {
+        setStatus("Enter tag key first.");
+        return;
+      }
+
+      const params = new URLSearchParams({
+        key,
+        geometry,
+        limit: String(limit)
+      });
+
+      if (value) {
+        params.set("value", value);
+      }
+
+      setStatus("Loading features...");
+      try {
+        const geojson = await fetchJson(`${API_BASE}/features?${params.toString()}`);
+        layer.clearLayers();
+        layer.addData(geojson);
+
+        if (layer.getLayers().length > 0) {
+          const bounds = layer.getBounds();
+          if (bounds.isValid()) {
+            map.fitBounds(bounds.pad(0.1));
+          }
+        }
+
+        setStatus(`Loaded ${geojson.features ? geojson.features.length : 0} features.`);
+      } catch (error) {
+        setStatus(`Failed to load features: ${error.message}`);
+      }
+    }
+
+    document.getElementById("loadKeysBtn").addEventListener("click", loadKeys);
+    document.getElementById("loadValuesBtn").addEventListener("click", loadValues);
+    document.getElementById("loadFeaturesBtn").addEventListener("click", loadFeatures);
+    document.getElementById("clearBtn").addEventListener("click", clearMap);
+
+    keyInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        loadValues();
       }
     });
+
+    valueInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        loadFeatures();
+      }
+    });
+
+    loadKeys();
   </script>
 </body>
 </html>
