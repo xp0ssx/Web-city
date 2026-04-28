@@ -1,2 +1,3 @@
-info.md
-.env
+/info.md
+/.env
+/db/test_scripts/*.csv
