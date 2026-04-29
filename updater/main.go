@@ -5,22 +5,30 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"web-city/updater/pipelines"
 )
 
 func main() {
-	mode := strings.ToLower(strings.TrimSpace(getEnv("UPDATER_MODE", "all")))
-	log.Printf("updater mode: %s", mode)
+	mode := strings.ToLower(strings.TrimSpace(getEnv("UPDATER_MODE", "")))
+
+	if mode == "" {
+		log.Fatalf("UPDATER_MODE is required (allowed: osm | datamos | all)")
+	}
 
 	switch mode {
 	case "osm":
 		runOSM()
+
 	case "datamos":
 		runDataMos()
+
 	case "all":
 		runOSM()
 		runDataMos()
+
 	default:
-		log.Fatalf("unsupported UPDATER_MODE: %s (allowed: osm|datamos|all)", mode)
+		log.Fatalf("invalid UPDATER_MODE=%s (allowed: osm | datamos | all)", mode)
 	}
 }
 
@@ -37,10 +45,10 @@ func runOSM() {
 
 func runDataMos() {
 	log.Println("starting DataMos pipeline")
-	if err := RunDataMos(); err != nil {
-		log.Fatalf("DataMos pipeline failed: %v", err)
+	if err := pipelines.RunDataMos(); err != nil {
+		log.Fatalf("DataMos failed: %v", err)
 	}
-	log.Println("DataMos pipeline completed")
+	log.Println("DataMos done")
 }
 
 func getEnv(key, fallback string) string {

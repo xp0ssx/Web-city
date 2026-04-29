@@ -50,6 +50,9 @@ services:
       OSM_PREFIX: ${OSM_PREFIX}
       OSM_FORCE_DOWNLOAD: "${OSM_FORCE_DOWNLOAD}"
       DATAMOS_API_KEY: ${DATAMOS_API_KEY}
+      DATAMOS_BASE_URL: https://apidata.mos.ru/v1
+      DATAMOS_DATASET_ID: all
+      DATAMOS_CONFIG_FILE: /app/config/datamos_datasets.json
     volumes:
       - osmdata:/data
     depends_on:

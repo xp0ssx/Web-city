@@ -18,6 +18,7 @@ RUN apt-get update \
 
 WORKDIR /app
 COPY run-import.sh /app/run-import.sh
+COPY config /app/config
 RUN chmod +x /app/run-import.sh
 
 COPY --from=build /bin/updater /bin/updater
