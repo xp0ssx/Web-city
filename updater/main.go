@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"os/exec"
 	"strings"
 
 	"web-city/updater/pipelines"
@@ -33,14 +32,11 @@ func main() {
 }
 
 func runOSM() {
-	log.Println("starting OSM pipeline via /app/run-import.sh")
-	cmd := exec.Command("/app/run-import.sh")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		log.Fatalf("OSM pipeline failed: %v", err)
+	log.Println("starting OSM pipeline")
+	if err := pipelines.RunOSM(); err != nil {
+		log.Fatalf("OSM failed: %v", err)
 	}
-	log.Println("OSM pipeline completed")
+	log.Println("OSM done")
 }
 
 func runDataMos() {

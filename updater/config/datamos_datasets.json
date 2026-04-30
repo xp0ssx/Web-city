@@ -3,8 +3,9 @@
     {
       "id": 505,
       "name": "Поликлиническая помощь детям",
-      "category": "healthcare",
-      "subcategory": "children_clinic",
+      "category": "social_infrastructure",
+      "subcategory": "children_medical_facilities",
+      "object_type": "children_clinic",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -15,8 +16,9 @@
     {
       "id": 503,
       "name": "Поликлиническая помощь взрослым",
-      "category": "healthcare",
-      "subcategory": "adult_clinic",
+      "category": "social_infrastructure",
+      "subcategory": "adult_medical_facilities",
+      "object_type": "adult_clinic",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -27,8 +29,9 @@
     {
       "id": 502,
       "name": "Больницы детские и специализированные",
-      "category": "healthcare",
-      "subcategory": "children_specialized_hospital",
+      "category": "social_infrastructure",
+      "subcategory": "children_medical_facilities",
+      "object_type": "children_hospital",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -39,8 +42,9 @@
     {
       "id": 506,
       "name": "Стоматологические поликлиники детские",
-      "category": "healthcare",
-      "subcategory": "children_dental_clinic",
+      "category": "social_infrastructure",
+      "subcategory": "children_medical_facilities",
+      "object_type": "children_dental_clinic",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -51,8 +55,9 @@
     {
       "id": 516,
       "name": "Скорая и неотложная медицинская помощь",
-      "category": "healthcare",
-      "subcategory": "emergency_medical_care",
+      "category": "social_infrastructure",
+      "subcategory": "adult_medical_facilities",
+      "object_type": "emergency_medical_care",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -63,8 +68,9 @@
     {
       "id": 517,
       "name": "Больницы взрослые",
-      "category": "healthcare",
-      "subcategory": "adult_hospital",
+      "category": "social_infrastructure",
+      "subcategory": "adult_medical_facilities",
+      "object_type": "adult_hospital",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -75,8 +81,9 @@
     {
       "id": 518,
       "name": "Стоматологические поликлиники взрослые",
-      "category": "healthcare",
-      "subcategory": "adult_dental_clinic",
+      "category": "social_infrastructure",
+      "subcategory": "adult_medical_facilities",
+      "object_type": "adult_dental_clinic",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -87,8 +94,9 @@
     {
       "id": 1260,
       "name": "Травматологические пункты",
-      "category": "healthcare",
-      "subcategory": "trauma_center",
+      "category": "social_infrastructure",
+      "subcategory": "adult_medical_facilities",
+      "object_type": "trauma_center",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -99,8 +107,9 @@
     {
       "id": 60662,
       "name": "Маршруты и остановки наземного городского пассажирского транспорта (Остановки)",
-      "category": "transport",
-      "subcategory": "public_transport_stop",
+      "category": "transport_accessibility",
+      "subcategory": "ground_public_transport",
+      "object_type": "public_transport_stop",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -111,20 +120,22 @@
     {
       "id": 624,
       "name": "Входы и выходы вестибюлей станций Московского метрополитена",
-      "category": "transport",
-      "subcategory": "metro_entrance",
+      "category": "transport_accessibility",
+      "subcategory": "rail_transit",
+      "object_type": "metro_entrance",
       "geometry_mode": "point",
       "projection": [
         "global_id",
-        "Name"
+        "NameOfStation"
       ],
-      "name_field": "Name"
+      "name_field": "NameOfStation"
     },
     {
       "id": 62207,
       "name": "Входы и выходы станций Московских центральных диаметров",
-      "category": "transport",
-      "subcategory": "mcd_entrance",
+      "category": "transport_accessibility",
+      "subcategory": "rail_transit",
+      "object_type": "mcd_entrance",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -135,8 +146,9 @@
     {
       "id": 2985,
       "name": "Зарядные станции для электромобилей",
-      "category": "transport",
-      "subcategory": "ev_charging_station",
+      "category": "transport_accessibility",
+      "subcategory": "vehicle_support_infrastructure",
+      "object_type": "ev_charging_station",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -147,8 +159,9 @@
     {
       "id": 2263,
       "name": "Образовательные учреждения города Москвы",
-      "category": "social",
-      "subcategory": "school_kindergarten",
+      "category": "social_infrastructure",
+      "subcategory": "general_education",
+      "object_type": "school_kindergarten",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -159,8 +172,9 @@
     {
       "id": 1181,
       "name": "Образовательные учреждения",
-      "category": "social",
-      "subcategory": "additional_education",
+      "category": "social_infrastructure",
+      "subcategory": "children_leisure_additional_education",
+      "object_type": "additional_education",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -171,8 +185,9 @@
     {
       "id": 1465,
       "name": "Парковые территории",
-      "category": "recreation",
-      "subcategory": "park",
+      "category": "recreation_environment",
+      "subcategory": "parks_greenery",
+      "object_type": "park",
       "geometry_mode": "area",
       "projection": [
         "global_id",
@@ -183,8 +198,9 @@
     {
       "id": 530,
       "name": "Объекты культурного наследия",
-      "category": "recreation",
-      "subcategory": "cultural_heritage",
+      "category": "recreation_environment",
+      "subcategory": "cultural_environment",
+      "object_type": "cultural_heritage",
       "geometry_mode": "area",
       "projection": [
         "global_id",
@@ -195,8 +211,9 @@
     {
       "id": 531,
       "name": "Театры",
-      "category": "recreation",
-      "subcategory": "theater",
+      "category": "recreation_environment",
+      "subcategory": "cultural_environment",
+      "object_type": "theater",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -207,8 +224,9 @@
     {
       "id": 493,
       "name": "Дома культуры и клубы",
-      "category": "recreation",
-      "subcategory": "cultural_center",
+      "category": "social_infrastructure",
+      "subcategory": "children_leisure_additional_education",
+      "object_type": "cultural_center",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -219,8 +237,9 @@
     {
       "id": 529,
       "name": "Музеи",
-      "category": "recreation",
-      "subcategory": "museum",
+      "category": "recreation_environment",
+      "subcategory": "cultural_environment",
+      "object_type": "museum",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -231,8 +250,9 @@
     {
       "id": 2465,
       "name": "Перечень туристско-информационных центров Москвы",
-      "category": "recreation",
-      "subcategory": "tourist_information_center",
+      "category": "recreation_environment",
+      "subcategory": "cultural_environment",
+      "object_type": "tourist_information_center",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -243,8 +263,9 @@
     {
       "id": 2249,
       "name": "Места для досуга и отдыха с детьми",
-      "category": "recreation",
-      "subcategory": "children_leisure_place",
+      "category": "recreation_environment",
+      "subcategory": "children_leisure",
+      "object_type": "children_leisure_place",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -255,8 +276,9 @@
     {
       "id": 64065,
       "name": "Пункты сбора вторичного сырья",
-      "category": "environment",
-      "subcategory": "recycling_point",
+      "category": "recreation_environment",
+      "subcategory": "waste_accumulation_sites",
+      "object_type": "recycling_point",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -267,8 +289,9 @@
     {
       "id": 2601,
       "name": "Данные по промышленным предприятиям",
-      "category": "environment",
-      "subcategory": "industrial_enterprise",
+      "category": "recreation_environment",
+      "subcategory": "industrial_pollution",
+      "object_type": "industrial_enterprise",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -279,8 +302,9 @@
     {
       "id": 3294,
       "name": "Перечень предприятий, получивших статус промышленного комплекса",
-      "category": "environment",
-      "subcategory": "industrial_complex",
+      "category": "recreation_environment",
+      "subcategory": "industrial_pollution",
+      "object_type": "industrial_complex",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -291,8 +315,9 @@
     {
       "id": 2542,
       "name": "Места накопления отходов",
-      "category": "environment",
-      "subcategory": "garbage_yards",
+      "category": "recreation_environment",
+      "subcategory": "waste_accumulation_sites",
+      "object_type": "garbage_yard",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -303,8 +328,9 @@
     {
       "id": 611,
       "name": "Многофункциональные центры предоставления государственных и муниципальных услуг",
-      "category": "government",
-      "subcategory": "mfc_center",
+      "category": "social_infrastructure",
+      "subcategory": "government_facilities",
+      "object_type": "mfc_center",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -315,8 +341,9 @@
     {
       "id": 61745,
       "name": "Управы районов города Москвы",
-      "category": "government",
-      "subcategory": "local_authority",
+      "category": "social_infrastructure",
+      "subcategory": "government_facilities",
+      "object_type": "local_authority",
       "geometry_mode": "point",
       "projection": [
         "global_id",
@@ -327,8 +354,9 @@
     {
       "id": 1342,
       "name": "Штабы городских народных дружин",
-      "category": "security",
-      "subcategory": "volunteer_guard_headquarters",
+      "category": "safety_economic_stability",
+      "subcategory": "emergency_services",
+      "object_type": "volunteer_guard_headquarters",
       "geometry_mode": "point",
       "projection": [
         "global_id",

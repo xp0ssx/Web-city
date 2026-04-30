@@ -27,6 +27,7 @@ type DataMosDatasetConfig struct {
 	Name         string   `json:"name"`
 	Category     string   `json:"category"`
 	Subcategory  string   `json:"subcategory"`
+	ObjectType   string   `json:"object_type"`
 	GeometryMode string   `json:"geometry_mode"`
 	Projection   []string `json:"projection"`
 	NameField    string   `json:"name_field"`
@@ -60,6 +61,7 @@ type ExtractedObject struct {
 	PointIndex     int
 	Category       string
 	Subcategory    string
+	ObjectType     string
 	Name           string
 	Lon            float64
 	Lat            float64
@@ -71,6 +73,7 @@ type ExtractedArea struct {
 	SourceGlobalID int64
 	Category       string
 	Subcategory    string
+	ObjectType     string
 	Name           string
 	GeometryType   string
 	GeometryJSON   string
@@ -236,11 +239,12 @@ func importDataMosDataset(
 		logDataMosStats(cfg, totalFeatures, len(allAreas), totalStats)
 		for i, area := range firstAreas(allAreas, 5) {
 			log.Printf(
-				"[%d] global_id=%d, category=%s, subcategory=%s, name=%s, geom_type=%s",
+				"[%d] global_id=%d, category=%s, subcategory=%s, object_type=%s, name=%s, geom_type=%s",
 				i,
 				area.SourceGlobalID,
 				area.Category,
 				area.Subcategory,
+				area.ObjectType,
 				area.Name,
 				area.GeometryType,
 			)
@@ -258,11 +262,12 @@ func importDataMosDataset(
 
 	for i, obj := range firstObjects(allObjects, 5) {
 		log.Printf(
-			"[%d] global_id=%d, category=%s, subcategory=%s, name=%s, lon=%.9f, lat=%.9f, point_index=%d",
+			"[%d] global_id=%d, category=%s, subcategory=%s, object_type=%s, name=%s, lon=%.9f, lat=%.9f, point_index=%d",
 			i,
 			obj.SourceGlobalID,
 			obj.Category,
 			obj.Subcategory,
+			obj.ObjectType,
 			obj.Name,
 			obj.Lon,
 			obj.Lat,
@@ -280,7 +285,7 @@ func importDataMosDataset(
 
 func logDataMosStats(cfg DataMosDatasetConfig, totalFeatures int, extractedItems int, stats extractionStats) {
 	log.Printf(
-		"DataMos dataset %d (%s): fetched %d features, extracted %d items, mode=%s, category=%s, subcategory=%s",
+		"DataMos dataset %d (%s): fetched %d features, extracted %d items, mode=%s, category=%s, subcategory=%s, object_type=%s",
 		cfg.DatasetID,
 		cfg.Name,
 		totalFeatures,
@@ -288,6 +293,7 @@ func logDataMosStats(cfg DataMosDatasetConfig, totalFeatures int, extractedItems
 		cfg.geometryMode(),
 		cfg.Category,
 		cfg.Subcategory,
+		cfg.ObjectType,
 	)
 	log.Printf(
 		"DataMos summary: missing_global_id=%d, bad_global_id=%d, missing_name=%d, missing_geometry=%d, unsupported_geometry=%d, bad_geometry=%d, swapped_coordinates=%d",
@@ -367,6 +373,9 @@ func validateDatasetConfig(cfg DataMosDatasetConfig) error {
 	}
 	if strings.TrimSpace(cfg.Subcategory) == "" {
 		return fmt.Errorf("DataMos dataset %d config has empty subcategory", cfg.DatasetID)
+	}
+	if strings.TrimSpace(cfg.ObjectType) == "" {
+		return fmt.Errorf("DataMos dataset %d config has empty object_type", cfg.DatasetID)
 	}
 	if len(cfg.Projection) == 0 {
 		return fmt.Errorf("DataMos dataset %d config has empty projection", cfg.DatasetID)
@@ -486,6 +495,7 @@ func extractObjects(collection FeatureCollection, cfg DataMosDatasetConfig) ([]E
 				PointIndex:     pointIndex,
 				Category:       cfg.Category,
 				Subcategory:    cfg.Subcategory,
+				ObjectType:     cfg.ObjectType,
 				Name:           name,
 				Lon:            point.Lon,
 				Lat:            point.Lat,
@@ -523,6 +533,7 @@ func extractAreas(collection FeatureCollection, cfg DataMosDatasetConfig) ([]Ext
 			SourceGlobalID: globalID,
 			Category:       cfg.Category,
 			Subcategory:    cfg.Subcategory,
+			ObjectType:     cfg.ObjectType,
 			Name:           name,
 			GeometryType:   feature.Geometry.Type,
 			GeometryJSON:   geometryJSON,
@@ -552,6 +563,7 @@ func saveObjects(ctx context.Context, db *pgxpool.Pool, objects []ExtractedObjec
 				source_point_index,
 				category,
 				subcategory,
+				object_type,
 				name,
 				geom,
 				updated_at
@@ -564,13 +576,15 @@ func saveObjects(ctx context.Context, db *pgxpool.Pool, objects []ExtractedObjec
 				$5,
 				$6,
 				$7,
-				ST_SetSRID(ST_MakePoint($8, $9), 4326),
+				$8,
+				ST_SetSRID(ST_MakePoint($9, $10), 4326),
 				now()
 			)
 			ON CONFLICT (source, source_dataset_id, source_object_id, source_point_index)
 			DO UPDATE SET
 				category = EXCLUDED.category,
 				subcategory = EXCLUDED.subcategory,
+				object_type = EXCLUDED.object_type,
 				name = EXCLUDED.name,
 				geom = EXCLUDED.geom,
 				updated_at = now()
@@ -581,6 +595,7 @@ func saveObjects(ctx context.Context, db *pgxpool.Pool, objects []ExtractedObjec
 			obj.PointIndex,
 			obj.Category,
 			obj.Subcategory,
+			obj.ObjectType,
 			obj.Name,
 			obj.Lon,
 			obj.Lat,
@@ -617,11 +632,12 @@ func saveAreas(ctx context.Context, db *pgxpool.Pool, areas []ExtractedArea) err
 					$3::bigint AS source_object_id,
 					$4::text AS category,
 					$5::text AS subcategory,
-					$6::text AS name,
+					$6::text AS object_type,
+					$7::text AS name,
 					ST_Multi(
 						ST_CollectionExtract(
 							ST_MakeValid(
-								ST_SetSRID(ST_GeomFromGeoJSON($7), 4326)
+								ST_SetSRID(ST_GeomFromGeoJSON($8), 4326)
 							),
 							3
 						)
@@ -633,6 +649,7 @@ func saveAreas(ctx context.Context, db *pgxpool.Pool, areas []ExtractedArea) err
 				source_object_id,
 				category,
 				subcategory,
+				object_type,
 				name,
 				geom,
 				area_m2,
@@ -644,6 +661,7 @@ func saveAreas(ctx context.Context, db *pgxpool.Pool, areas []ExtractedArea) err
 				source_object_id,
 				category,
 				subcategory,
+				object_type,
 				name,
 				geom,
 				ST_Area(geom::geography),
@@ -653,6 +671,7 @@ func saveAreas(ctx context.Context, db *pgxpool.Pool, areas []ExtractedArea) err
 			DO UPDATE SET
 				category = EXCLUDED.category,
 				subcategory = EXCLUDED.subcategory,
+				object_type = EXCLUDED.object_type,
 				name = EXCLUDED.name,
 				geom = EXCLUDED.geom,
 				area_m2 = EXCLUDED.area_m2,
@@ -663,6 +682,7 @@ func saveAreas(ctx context.Context, db *pgxpool.Pool, areas []ExtractedArea) err
 			area.SourceGlobalID,
 			area.Category,
 			area.Subcategory,
+			area.ObjectType,
 			area.Name,
 			area.GeometryJSON,
 		)

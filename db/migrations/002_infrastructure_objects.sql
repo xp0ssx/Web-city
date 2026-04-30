@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS infrastructure_objects (
 
   category TEXT NOT NULL,
   subcategory TEXT NOT NULL,
+  object_type TEXT NOT NULL,
   name TEXT NOT NULL,
 
   geom GEOMETRY(Point, 4326) NOT NULL,
@@ -26,6 +27,8 @@ CREATE TABLE IF NOT EXISTS infrastructure_objects (
     CHECK (btrim(category) <> ''),
   CONSTRAINT infrastructure_objects_subcategory_not_blank
     CHECK (btrim(subcategory) <> ''),
+  CONSTRAINT infrastructure_objects_object_type_not_blank
+    CHECK (btrim(object_type) <> ''),
   CONSTRAINT infrastructure_objects_name_not_blank
     CHECK (btrim(name) <> '')
 );
@@ -38,6 +41,12 @@ CREATE INDEX IF NOT EXISTS idx_infrastructure_objects_subcategory
 
 CREATE INDEX IF NOT EXISTS idx_infrastructure_objects_category_subcategory
   ON infrastructure_objects (category, subcategory);
+
+CREATE INDEX IF NOT EXISTS idx_infrastructure_objects_category_subcategory_object_type
+  ON infrastructure_objects (category, subcategory, object_type);
+
+CREATE INDEX IF NOT EXISTS idx_infrastructure_objects_object_type
+  ON infrastructure_objects (object_type);
 
 CREATE INDEX IF NOT EXISTS idx_infrastructure_objects_geom
   ON infrastructure_objects USING GIST (geom);
@@ -54,6 +63,7 @@ CREATE TABLE IF NOT EXISTS infrastructure_areas (
 
   category TEXT NOT NULL,
   subcategory TEXT NOT NULL,
+  object_type TEXT NOT NULL,
   name TEXT NOT NULL,
 
   geom GEOMETRY(MultiPolygon, 4326) NOT NULL,
@@ -71,6 +81,8 @@ CREATE TABLE IF NOT EXISTS infrastructure_areas (
     CHECK (btrim(category) <> ''),
   CONSTRAINT infrastructure_areas_subcategory_not_blank
     CHECK (btrim(subcategory) <> ''),
+  CONSTRAINT infrastructure_areas_object_type_not_blank
+    CHECK (btrim(object_type) <> ''),
   CONSTRAINT infrastructure_areas_name_not_blank
     CHECK (btrim(name) <> '')
 );
@@ -83,6 +95,12 @@ CREATE INDEX IF NOT EXISTS idx_infrastructure_areas_subcategory
 
 CREATE INDEX IF NOT EXISTS idx_infrastructure_areas_category_subcategory
   ON infrastructure_areas (category, subcategory);
+
+CREATE INDEX IF NOT EXISTS idx_infrastructure_areas_category_subcategory_object_type
+  ON infrastructure_areas (category, subcategory, object_type);
+
+CREATE INDEX IF NOT EXISTS idx_infrastructure_areas_object_type
+  ON infrastructure_areas (object_type);
 
 CREATE INDEX IF NOT EXISTS idx_infrastructure_areas_geom
   ON infrastructure_areas USING GIST (geom);

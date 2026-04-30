@@ -1,0 +1,647 @@
+[
+  {
+    "district": "Академический",
+    "price_rub_m2": 346995,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Алексеевский",
+    "price_rub_m2": 348309,
+    "yield_vs_bank_deposit": 0.7
+  },
+  {
+    "district": "Алтуфьевский",
+    "price_rub_m2": 247543,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Арбат",
+    "price_rub_m2": 536373,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Аэропорт",
+    "price_rub_m2": 358888,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Бабушкинский",
+    "price_rub_m2": 273345,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Басманный",
+    "price_rub_m2": 350935,
+    "yield_vs_bank_deposit": 0.6
+  },
+  {
+    "district": "Беговой",
+    "price_rub_m2": 403516,
+    "yield_vs_bank_deposit": 0.4
+  },
+  {
+    "district": "Бескудниковский",
+    "price_rub_m2": 267101,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Бибирево",
+    "price_rub_m2": 247543,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Бирюлево Восточное",
+    "price_rub_m2": 220365,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Бирюлево Западное",
+    "price_rub_m2": 220365,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Богородское",
+    "price_rub_m2": 271220,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Братеево",
+    "price_rub_m2": 248935,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Бутырский",
+    "price_rub_m2": 304420,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Вешняки",
+    "price_rub_m2": 238249,
+    "yield_vs_bank_deposit": 1.3
+  },
+  {
+    "district": "Внуково",
+    "price_rub_m2": 249385,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Войковский",
+    "price_rub_m2": 294454,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Восточное Дегунино",
+    "price_rub_m2": 267101,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Восточное Измайлово",
+    "price_rub_m2": 257272,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Восточный",
+    "price_rub_m2": 245443,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Выхино-Жулебино",
+    "price_rub_m2": 238249,
+    "yield_vs_bank_deposit": 1.3
+  },
+  {
+    "district": "Гагаринский",
+    "price_rub_m2": 376752,
+    "yield_vs_bank_deposit": 0.5
+  },
+  {
+    "district": "Головинский",
+    "price_rub_m2": 296470,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Гольяново",
+    "price_rub_m2": 245443,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Даниловский",
+    "price_rub_m2": 309126,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Дмитровский",
+    "price_rub_m2": 267101,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Донской",
+    "price_rub_m2": 373936,
+    "yield_vs_bank_deposit": 0.3
+  },
+  {
+    "district": "Дорогомилово",
+    "price_rub_m2": 418815,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Жулебино",
+    "price_rub_m2": 229136,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Замоскворечье",
+    "price_rub_m2": 421689,
+    "yield_vs_bank_deposit": 0.7
+  },
+  {
+    "district": "Западное Дегунино",
+    "price_rub_m2": 267101,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Зюзино",
+    "price_rub_m2": 282935,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Зябликово",
+    "price_rub_m2": 248935,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Ивановское",
+    "price_rub_m2": 240291,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Измайлово",
+    "price_rub_m2": 257272,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Капотня",
+    "price_rub_m2": 247993,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Кожухово",
+    "price_rub_m2": 229136,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Коньково",
+    "price_rub_m2": 291589,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Коптево",
+    "price_rub_m2": 294454,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Косино-Ухтомский",
+    "price_rub_m2": 229136,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Котловка",
+    "price_rub_m2": 309126,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Красносельский",
+    "price_rub_m2": 398222,
+    "yield_vs_bank_deposit": 0.1
+  },
+  {
+    "district": "Крылатское",
+    "price_rub_m2": 320164,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Крюково",
+    "price_rub_m2": 216486,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Кузьминки",
+    "price_rub_m2": 262299,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Кунцево",
+    "price_rub_m2": 299064,
+    "yield_vs_bank_deposit": 0.7
+  },
+  {
+    "district": "Куркино",
+    "price_rub_m2": 275940,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Левобережный",
+    "price_rub_m2": 291585,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Лефортово",
+    "price_rub_m2": 288506,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Лианозово",
+    "price_rub_m2": 242973,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Ломоносовский",
+    "price_rub_m2": 376752,
+    "yield_vs_bank_deposit": 0.5
+  },
+  {
+    "district": "Лосиноостровский",
+    "price_rub_m2": 238925,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Люблино",
+    "price_rub_m2": 247755,
+    "yield_vs_bank_deposit": 1.4
+  },
+  {
+    "district": "Марфино",
+    "price_rub_m2": 275277,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Марьина роща",
+    "price_rub_m2": 347058,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Марьино",
+    "price_rub_m2": 247993,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Матушкино",
+    "price_rub_m2": 216486,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Метрогородок",
+    "price_rub_m2": 271220,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Мещанский",
+    "price_rub_m2": 430103,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Митино",
+    "price_rub_m2": 255092,
+    "yield_vs_bank_deposit": 0.7
+  },
+  {
+    "district": "Можайский",
+    "price_rub_m2": 302798,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Молжаниновский",
+    "price_rub_m2": 275940,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Москворечье-Сабурово",
+    "price_rub_m2": 258008,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Нагатино-Садовники",
+    "price_rub_m2": 303485,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Нагатинский Затон",
+    "price_rub_m2": 303485,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Нагорный",
+    "price_rub_m2": 282935,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Некрасовка",
+    "price_rub_m2": 229136,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Нижегородский",
+    "price_rub_m2": 255836,
+    "yield_vs_bank_deposit": 1.3
+  },
+  {
+    "district": "Ново-Переделкино",
+    "price_rub_m2": 249385,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Новогиреево",
+    "price_rub_m2": 240291,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Новокосино",
+    "price_rub_m2": 241499,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Обручевский",
+    "price_rub_m2": 291589,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Орехово-Борисово Северное",
+    "price_rub_m2": 264353,
+    "yield_vs_bank_deposit": 1.4
+  },
+  {
+    "district": "Орехово-Борисово Южное",
+    "price_rub_m2": 264353,
+    "yield_vs_bank_deposit": 1.4
+  },
+  {
+    "district": "Останкинский",
+    "price_rub_m2": 304852,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Остоженка",
+    "price_rub_m2": 553522,
+    "yield_vs_bank_deposit": 0.1
+  },
+  {
+    "district": "Отрадное",
+    "price_rub_m2": 257940,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Очаково-Матвеевское",
+    "price_rub_m2": 317523,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Перово",
+    "price_rub_m2": 259215,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Печатники",
+    "price_rub_m2": 266246,
+    "yield_vs_bank_deposit": 0.7
+  },
+  {
+    "district": "Покровское-Стрешнево",
+    "price_rub_m2": 294638,
+    "yield_vs_bank_deposit": 0.6
+  },
+  {
+    "district": "Преображенское",
+    "price_rub_m2": 289518,
+    "yield_vs_bank_deposit": 0.6
+  },
+  {
+    "district": "Пресненский",
+    "price_rub_m2": 437171,
+    "yield_vs_bank_deposit": 0.7
+  },
+  {
+    "district": "Проспект Вернадского",
+    "price_rub_m2": 347667,
+    "yield_vs_bank_deposit": 0.6
+  },
+  {
+    "district": "Раменки",
+    "price_rub_m2": 376752,
+    "yield_vs_bank_deposit": 0.5
+  },
+  {
+    "district": "Ростокино",
+    "price_rub_m2": 304852,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Рязанский",
+    "price_rub_m2": 255836,
+    "yield_vs_bank_deposit": 1.3
+  },
+  {
+    "district": "Савеловский",
+    "price_rub_m2": 347058,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Савёлки",
+    "price_rub_m2": 216486,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Свиблово",
+    "price_rub_m2": 300765,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Северное Бутово",
+    "price_rub_m2": 255983,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Северное Измайлово",
+    "price_rub_m2": 245443,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Северное Медведково",
+    "price_rub_m2": 258672,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Северное Тушино",
+    "price_rub_m2": 266597,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Северный",
+    "price_rub_m2": 267101,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Силино",
+    "price_rub_m2": 216486,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Сокол",
+    "price_rub_m2": 358888,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Соколиная гора",
+    "price_rub_m2": 288506,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Сокольники",
+    "price_rub_m2": 331734,
+    "yield_vs_bank_deposit": 0.7
+  },
+  {
+    "district": "Солнцево",
+    "price_rub_m2": 252182,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Старое Крюково",
+    "price_rub_m2": 216486,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Строгино",
+    "price_rub_m2": 287759,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Таганский",
+    "price_rub_m2": 408384,
+    "yield_vs_bank_deposit": 0.7
+  },
+  {
+    "district": "Тверской",
+    "price_rub_m2": 538621,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Текстильщики",
+    "price_rub_m2": 262299,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Теплый Стан",
+    "price_rub_m2": 251239,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Тимирязевский",
+    "price_rub_m2": 304420,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Тропарево-Никулино",
+    "price_rub_m2": 324089,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Филевский парк",
+    "price_rub_m2": 363427,
+    "yield_vs_bank_deposit": 0.9
+  },
+  {
+    "district": "Фили-Давыдково",
+    "price_rub_m2": 302798,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Хамовники",
+    "price_rub_m2": 483223,
+    "yield_vs_bank_deposit": 0.4
+  },
+  {
+    "district": "Ховрино",
+    "price_rub_m2": 291585,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Хорошево-Мневники",
+    "price_rub_m2": 330690,
+    "yield_vs_bank_deposit": 0.7
+  },
+  {
+    "district": "Хорошевский",
+    "price_rub_m2": 343147,
+    "yield_vs_bank_deposit": 0.5
+  },
+  {
+    "district": "Царицыно",
+    "price_rub_m2": 258008,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Центр Москвы",
+    "price_rub_m2": 533738,
+    "yield_vs_bank_deposit": 0.4
+  },
+  {
+    "district": "Черемушки",
+    "price_rub_m2": 328868,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Чертаново Северное",
+    "price_rub_m2": 278739,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Чертаново Центральное",
+    "price_rub_m2": 278739,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Чертаново Южное",
+    "price_rub_m2": 257642,
+    "yield_vs_bank_deposit": 1.2
+  },
+  {
+    "district": "Щукино",
+    "price_rub_m2": 294638,
+    "yield_vs_bank_deposit": 0.6
+  },
+  {
+    "district": "Южное Бутово",
+    "price_rub_m2": 230656,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Южное Медведково",
+    "price_rub_m2": 273345,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Южное Тушино",
+    "price_rub_m2": 266597,
+    "yield_vs_bank_deposit": 1.1
+  },
+  {
+    "district": "Южнопортовый",
+    "price_rub_m2": 316369,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Якиманка",
+    "price_rub_m2": 529942,
+    "yield_vs_bank_deposit": 0.8
+  },
+  {
+    "district": "Ярославский",
+    "price_rub_m2": 238925,
+    "yield_vs_bank_deposit": 1.0
+  },
+  {
+    "district": "Ясенево",
+    "price_rub_m2": 255719,
+    "yield_vs_bank_deposit": 1.3
+  }
+]

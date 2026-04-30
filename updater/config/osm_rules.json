@@ -1,0 +1,494 @@
+{
+  "rules": [
+    {
+      "id": 1101,
+      "name": "АЗС",
+      "category": "transport_accessibility",
+      "subcategory": "vehicle_support_infrastructure",
+      "object_type": "fuel_station",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "fuel"
+    },
+    {
+      "id": 1201,
+      "name": "Наземная парковка",
+      "category": "transport_accessibility",
+      "subcategory": "parking_infrastructure",
+      "object_type": "parking_surface",
+      "geometry_mode": "point",
+      "tag_key": "parking",
+      "tag_value": "surface"
+    },
+    {
+      "id": 1202,
+      "name": "Подземная парковка",
+      "category": "transport_accessibility",
+      "subcategory": "parking_infrastructure",
+      "object_type": "parking_underground",
+      "geometry_mode": "point",
+      "tag_key": "parking",
+      "tag_value": "underground"
+    },
+    {
+      "id": 1203,
+      "name": "Многоуровневая парковка",
+      "category": "transport_accessibility",
+      "subcategory": "parking_infrastructure",
+      "object_type": "parking_multi_storey",
+      "geometry_mode": "point",
+      "tag_key": "parking",
+      "tag_value": "multi-storey"
+    },
+    {
+      "id": 3101,
+      "name": "Супермаркет",
+      "category": "commercial_household",
+      "subcategory": "grocery_stores",
+      "object_type": "supermarket",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "supermarket"
+    },
+    {
+      "id": 3102,
+      "name": "Магазин у дома",
+      "category": "commercial_household",
+      "subcategory": "grocery_stores",
+      "object_type": "convenience_store",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "convenience"
+    },
+    {
+      "id": 3103,
+      "name": "Овощной магазин",
+      "category": "commercial_household",
+      "subcategory": "grocery_stores",
+      "object_type": "greengrocer",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "greengrocer"
+    },
+    {
+      "id": 3104,
+      "name": "Мясной магазин",
+      "category": "commercial_household",
+      "subcategory": "grocery_stores",
+      "object_type": "butcher",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "butcher"
+    },
+    {
+      "id": 3105,
+      "name": "Молочный магазин",
+      "category": "commercial_household",
+      "subcategory": "grocery_stores",
+      "object_type": "dairy_shop",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "dairy"
+    },
+    {
+      "id": 3106,
+      "name": "Пекарня",
+      "category": "commercial_household",
+      "subcategory": "grocery_stores",
+      "object_type": "bakery",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "bakery"
+    },
+    {
+      "id": 3107,
+      "name": "Универсальный магазин",
+      "category": "commercial_household",
+      "subcategory": "grocery_stores",
+      "object_type": "general_store",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "general"
+    },
+    {
+      "id": 3108,
+      "name": "Рыбный магазин",
+      "category": "commercial_household",
+      "subcategory": "grocery_stores",
+      "object_type": "seafood_shop",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "seafood"
+    },
+    {
+      "id": 3109,
+      "name": "Сырный магазин",
+      "category": "commercial_household",
+      "subcategory": "grocery_stores",
+      "object_type": "cheese_shop",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "cheese"
+    },
+    {
+      "id": 3201,
+      "name": "Аптека",
+      "category": "commercial_household",
+      "subcategory": "pharmacies",
+      "object_type": "pharmacy",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "pharmacy"
+    },
+    {
+      "id": 3301,
+      "name": "Парикмахерская",
+      "category": "commercial_household",
+      "subcategory": "hairdressers",
+      "object_type": "hairdresser",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "hairdresser"
+    },
+    {
+      "id": 3401,
+      "name": "Салон красоты",
+      "category": "commercial_household",
+      "subcategory": "beauty_salons",
+      "object_type": "beauty_salon",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "beauty"
+    },
+    {
+      "id": 3501,
+      "name": "Химчистка",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "dry_cleaning",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "dry_cleaning"
+    },
+    {
+      "id": 3502,
+      "name": "Прачечная",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "laundry",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "laundry"
+    },
+    {
+      "id": 3503,
+      "name": "Ремонт обуви",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "shoe_repair",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "shoe_repair"
+    },
+    {
+      "id": 3504,
+      "name": "Ателье",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "tailor_shop",
+      "geometry_mode": "point",
+      "tag_key": "shop",
+      "tag_value": "tailor"
+    },
+    {
+      "id": 3505,
+      "name": "Ателье",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "tailor_craft",
+      "geometry_mode": "point",
+      "tag_key": "craft",
+      "tag_value": "tailor"
+    },
+    {
+      "id": 3506,
+      "name": "Сапожник",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "shoemaker",
+      "geometry_mode": "point",
+      "tag_key": "craft",
+      "tag_value": "shoemaker"
+    },
+    {
+      "id": 3507,
+      "name": "Ремонт электроники",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "electronics_repair",
+      "geometry_mode": "point",
+      "tag_key": "craft",
+      "tag_value": "electronics_repair"
+    },
+    {
+      "id": 3508,
+      "name": "Изготовление ключей",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "key_cutter",
+      "geometry_mode": "point",
+      "tag_key": "craft",
+      "tag_value": "key_cutter"
+    },
+    {
+      "id": 3509,
+      "name": "Пошив одежды",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "dressmaker",
+      "geometry_mode": "point",
+      "tag_key": "craft",
+      "tag_value": "dressmaker"
+    },
+    {
+      "id": 3510,
+      "name": "Часовой мастер",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "watchmaker",
+      "geometry_mode": "point",
+      "tag_key": "craft",
+      "tag_value": "watchmaker"
+    },
+    {
+      "id": 3511,
+      "name": "Почтовое отделение",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_type": "post_office",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "post_office"
+    },
+    {
+      "id": 3601,
+      "name": "Рынок",
+      "category": "commercial_household",
+      "subcategory": "markets",
+      "object_type": "marketplace",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "marketplace"
+    },
+    {
+      "id": 4211,
+      "name": "Водный объект",
+      "category": "recreation_environment",
+      "subcategory": "water_bodies",
+      "object_type": "water",
+      "geometry_mode": "area",
+      "tag_key": "natural",
+      "tag_value": "water"
+    },
+    {
+      "id": 4212,
+      "name": "Водно-болотная территория",
+      "category": "recreation_environment",
+      "subcategory": "water_bodies",
+      "object_type": "wetland",
+      "geometry_mode": "area",
+      "tag_key": "natural",
+      "tag_value": "wetland"
+    },
+    {
+      "id": 4221,
+      "name": "Лесной массив",
+      "category": "recreation_environment",
+      "subcategory": "natural_greenery",
+      "object_type": "wood",
+      "geometry_mode": "area",
+      "tag_key": "natural",
+      "tag_value": "wood"
+    },
+    {
+      "id": 4222,
+      "name": "Кустарниковая зона",
+      "category": "recreation_environment",
+      "subcategory": "natural_greenery",
+      "object_type": "scrub",
+      "geometry_mode": "area",
+      "tag_key": "natural",
+      "tag_value": "scrub"
+    },
+    {
+      "id": 4223,
+      "name": "Травянистая зона",
+      "category": "recreation_environment",
+      "subcategory": "natural_greenery",
+      "object_type": "grassland",
+      "geometry_mode": "area",
+      "tag_key": "natural",
+      "tag_value": "grassland"
+    },
+    {
+      "id": 4311,
+      "name": "Библиотека",
+      "category": "recreation_environment",
+      "subcategory": "cultural_environment",
+      "object_type": "library",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "library"
+    },
+    {
+      "id": 4312,
+      "name": "Центр искусств",
+      "category": "recreation_environment",
+      "subcategory": "cultural_environment",
+      "object_type": "arts_centre",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "arts_centre"
+    },
+    {
+      "id": 4321,
+      "name": "Кафе",
+      "category": "recreation_environment",
+      "subcategory": "catering_leisure",
+      "object_type": "cafe",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "cafe"
+    },
+    {
+      "id": 4322,
+      "name": "Ресторан",
+      "category": "recreation_environment",
+      "subcategory": "catering_leisure",
+      "object_type": "restaurant",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "restaurant"
+    },
+    {
+      "id": 4323,
+      "name": "Фастфуд",
+      "category": "recreation_environment",
+      "subcategory": "catering_leisure",
+      "object_type": "fast_food",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "fast_food"
+    },
+    {
+      "id": 4324,
+      "name": "Бар",
+      "category": "recreation_environment",
+      "subcategory": "catering_leisure",
+      "object_type": "bar",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "bar"
+    },
+    {
+      "id": 4325,
+      "name": "Паб",
+      "category": "recreation_environment",
+      "subcategory": "catering_leisure",
+      "object_type": "pub",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "pub"
+    },
+    {
+      "id": 4326,
+      "name": "Кинотеатр",
+      "category": "recreation_environment",
+      "subcategory": "catering_leisure",
+      "object_type": "cinema",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "cinema"
+    },
+    {
+      "id": 4331,
+      "name": "Спортивный центр",
+      "category": "recreation_environment",
+      "subcategory": "sports_infrastructure",
+      "object_type": "sports_centre",
+      "geometry_mode": "point",
+      "tag_key": "leisure",
+      "tag_value": "sports_centre"
+    },
+    {
+      "id": 4332,
+      "name": "Фитнес-центр",
+      "category": "recreation_environment",
+      "subcategory": "sports_infrastructure",
+      "object_type": "fitness_centre",
+      "geometry_mode": "point",
+      "tag_key": "leisure",
+      "tag_value": "fitness_centre"
+    },
+    {
+      "id": 4333,
+      "name": "Стадион",
+      "category": "recreation_environment",
+      "subcategory": "sports_infrastructure",
+      "object_type": "stadium",
+      "geometry_mode": "point",
+      "tag_key": "leisure",
+      "tag_value": "stadium"
+    },
+    {
+      "id": 4334,
+      "name": "Бассейн",
+      "category": "recreation_environment",
+      "subcategory": "sports_infrastructure",
+      "object_type": "swimming_pool",
+      "geometry_mode": "point",
+      "tag_key": "leisure",
+      "tag_value": "swimming_pool"
+    },
+    {
+      "id": 4335,
+      "name": "Спортивная площадка",
+      "category": "recreation_environment",
+      "subcategory": "sports_infrastructure",
+      "object_type": "pitch",
+      "geometry_mode": "point",
+      "tag_key": "leisure",
+      "tag_value": "pitch"
+    },
+    {
+      "id": 4336,
+      "name": "Спортивная дорожка",
+      "category": "recreation_environment",
+      "subcategory": "sports_infrastructure",
+      "object_type": "track",
+      "geometry_mode": "point",
+      "tag_key": "leisure",
+      "tag_value": "track"
+    },
+    {
+      "id": 5101,
+      "name": "Пожарная часть",
+      "category": "safety_economic_stability",
+      "subcategory": "emergency_services",
+      "object_type": "fire_station",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "fire_station"
+    },
+    {
+      "id": 5102,
+      "name": "Полиция",
+      "category": "safety_economic_stability",
+      "subcategory": "emergency_services",
+      "object_type": "police",
+      "geometry_mode": "point",
+      "tag_key": "amenity",
+      "tag_value": "police"
+    }
+  ]
+}

@@ -49,6 +49,7 @@ services:
       OSM_MIN_BYTES: "${OSM_MIN_BYTES}"
       OSM_PREFIX: ${OSM_PREFIX}
       OSM_FORCE_DOWNLOAD: "${OSM_FORCE_DOWNLOAD}"
+      OSM_CONFIG_FILE: /app/config/osm_rules.json
       DATAMOS_API_KEY: ${DATAMOS_API_KEY}
       DATAMOS_BASE_URL: https://apidata.mos.ru/v1
       DATAMOS_DATASET_ID: all
@@ -65,6 +66,7 @@ services:
       - api
     volumes:
       - ./frontend:/usr/share/nginx/html:ro
+      - ./data:/usr/share/nginx/data:ro
     ports:
       - "8090:80"
 

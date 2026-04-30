@@ -41,6 +41,7 @@ func main() {
 
 	dbStore := store.New(db)
 	tagsHandler := handlers.NewTagsHandler(dbStore)
+	infrastructureHandler := handlers.NewInfrastructureHandler(dbStore)
 
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
@@ -57,6 +58,12 @@ func main() {
 	})
 
 	r.Get("/api/v1/features", tagsHandler.Features)
+
+	r.Route("/api/v1/infrastructure", func(r chi.Router) {
+		r.Get("/facets", infrastructureHandler.Facets)
+		r.Get("/objects", infrastructureHandler.Objects)
+		r.Get("/areas", infrastructureHandler.Areas)
+	})
 
 	srv := &http.Server{
 		Addr:              ":" + port,
