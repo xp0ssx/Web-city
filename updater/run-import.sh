@@ -18,6 +18,9 @@ OSM_EXTRACT_STRATEGY="${OSM_EXTRACT_STRATEGY:-complete_ways}"
 OSM_PREFIX="${OSM_PREFIX:-osm}"
 OSM_MIN_BYTES="${OSM_MIN_BYTES:-50000000}"
 OSM_FORCE_DOWNLOAD="${OSM_FORCE_DOWNLOAD:-0}"
+OSM_VALIDATE_MD5="${OSM_VALIDATE_MD5:-1}"
+OSM_BUILD_FEATURES="${OSM_BUILD_FEATURES:-0}"
+OSM_DROP_INTERMEDIATE="${OSM_DROP_INTERMEDIATE:-1}"
 
 RUN_ID=""
 
@@ -39,8 +42,12 @@ validate_md5() {
     return 0
   fi
 
+  if [ "$OSM_VALIDATE_MD5" != "1" ]; then
+    return 0
+  fi
+
   tmp_md5="$(mktemp)"
-  if ! curl -fsSL --retry 3 --retry-all-errors --connect-timeout 30 "$md5_url" -o "$tmp_md5"; then
+  if ! curl -fsSL --retry 3 --retry-all-errors --connect-timeout 30 --max-time 60 "$md5_url" -o "$tmp_md5"; then
     rm -f "$tmp_md5"
     return 0
   fi
@@ -183,8 +190,9 @@ osm2pgsql \
   --username="$DB_USER" \
   "$IMPORT_FILE"
 
-echo "Building unified feature layer..."
-psql_cmd <<SQL
+if [ "$OSM_BUILD_FEATURES" = "1" ]; then
+  echo "Building unified feature layer..."
+  psql_cmd <<SQL
 TRUNCATE TABLE osm_features;
 
 INSERT INTO osm_features (import_run_id, osm_id, source_layer, name, tags, geom)
@@ -234,5 +242,28 @@ SET
   rows_features=(SELECT COUNT(*) FROM osm_features)
 WHERE id=$RUN_ID;
 SQL
+else
+  echo "Skipping unified feature layer (OSM_BUILD_FEATURES=$OSM_BUILD_FEATURES)."
+  psql_cmd <<SQL
+TRUNCATE TABLE osm_features;
+
+UPDATE import_runs
+SET
+  status='success',
+  finished_at=now(),
+  rows_point=(SELECT COUNT(*) FROM ${OSM_PREFIX}_point),
+  rows_line=(SELECT COUNT(*) FROM ${OSM_PREFIX}_line),
+  rows_polygon=(SELECT COUNT(*) FROM ${OSM_PREFIX}_polygon),
+  rows_features=0
+WHERE id=$RUN_ID;
+SQL
+fi
+
+if [ "$OSM_DROP_INTERMEDIATE" = "1" ]; then
+  echo "Dropping osm2pgsql intermediate tables (OSM_DROP_INTERMEDIATE=$OSM_DROP_INTERMEDIATE)."
+  psql_cmd <<SQL
+DROP TABLE IF EXISTS ${OSM_PREFIX}_nodes, ${OSM_PREFIX}_ways, ${OSM_PREFIX}_rels CASCADE;
+SQL
+fi
 
 echo "Import finished successfully. Run id: $RUN_ID"

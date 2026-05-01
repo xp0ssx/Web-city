@@ -3,210 +3,305 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Web-city Data Explorer</title>
+  <title>Web-city</title>
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
   <style>
+    :root {
+      color-scheme: light;
+      --border: #d7dee8;
+      --text: #172033;
+      --muted: #667085;
+      --panel: #f7f9fc;
+      --accent: #1f6feb;
+      --accent-soft: #e8f1ff;
+      --good: #12805c;
+      --mid: #b7791f;
+      --bad: #c2410c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     html,
     body {
       margin: 0;
       width: 100%;
       height: 100%;
       font-family: Arial, sans-serif;
-      color: #0f172a;
+      color: var(--text);
+      background: #e8edf4;
     }
 
     .app {
       display: grid;
-      grid-template-columns: 360px 1fr;
+      grid-template-columns: minmax(340px, 420px) 1fr;
       height: 100vh;
+      min-height: 640px;
     }
 
-    .sidebar {
-      padding: 16px;
-      border-right: 1px solid #d8dee9;
-      overflow: auto;
-      background: #f7f9fb;
+    .panel {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      border-right: 1px solid var(--border);
+      background: var(--panel);
     }
 
-    .sidebar h1 {
-      margin: 0 0 14px;
-      font-size: 20px;
+    .panel-header {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      background: #fff;
     }
 
-    .field {
-      margin-bottom: 12px;
+    .title {
+      margin: 0 0 12px;
+      font-size: 21px;
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 10px;
+      align-items: end;
     }
 
     .field label {
       display: block;
-      font-size: 13px;
-      margin-bottom: 4px;
-      color: #475569;
+      margin-bottom: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
     }
 
-    .field input,
     .field select {
       width: 100%;
-      box-sizing: border-box;
-      padding: 9px 10px;
-      border: 1px solid #cbd5e1;
+      min-height: 38px;
+      padding: 8px 10px;
+      border: 1px solid #c9d3e0;
       border-radius: 6px;
-      font-size: 14px;
       background: #fff;
-    }
-
-    .buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin: 12px 0;
-    }
-
-    button {
-      padding: 9px 10px;
-      border: 0;
-      border-radius: 6px;
-      cursor: pointer;
+      color: var(--text);
       font-size: 14px;
-      font-weight: 700;
-    }
-
-    .primary {
-      background: #2563eb;
-      color: white;
-    }
-
-    .secondary {
-      background: #e2e8f0;
-      color: #0f172a;
     }
 
     .status {
-      margin: 12px 0;
-      padding: 10px 12px;
-      border-radius: 6px;
-      background: #e8f0ff;
-      color: #1e3a8a;
-      font-size: 13px;
-      line-height: 1.4;
+      margin-top: 12px;
       min-height: 18px;
-    }
-
-    .list {
-      margin-top: 10px;
-      max-height: 280px;
-      overflow: auto;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      background: white;
-    }
-
-    .item {
-      padding: 9px 10px;
-      border-bottom: 1px solid #e2e8f0;
-      cursor: pointer;
-      font-size: 12px;
+      color: var(--muted);
+      font-size: 13px;
       line-height: 1.35;
     }
 
-    .item:last-child {
-      border-bottom: 0;
+    .result {
+      padding: 16px;
+      overflow: auto;
     }
 
-    .item:hover {
-      background: #f1f5f9;
+    .empty {
+      padding: 14px;
+      border: 1px dashed #c9d3e0;
+      border-radius: 8px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 14px;
+      line-height: 1.45;
     }
 
-    .item strong {
-      display: block;
-      margin-bottom: 2px;
+    .score-box {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .score {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 28px;
+      font-weight: 700;
+      background: var(--accent);
+    }
+
+    .meta {
+      min-width: 0;
       font-size: 13px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .meta strong {
+      color: var(--text);
+    }
+
+    .nav {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin: 0 0 10px;
+      min-height: 32px;
+    }
+
+    .back {
+      min-height: 32px;
+      padding: 6px 9px;
+      border: 1px solid #c9d3e0;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .crumb {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .rows {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .row:hover {
+      border-color: #9ab8e8;
+      background: #fbfdff;
+    }
+
+    .row-top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .row-title {
+      min-width: 0;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .row-score {
+      min-width: 42px;
+      text-align: right;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .bar {
+      height: 6px;
+      margin-top: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e5ebf3;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .details {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
     }
 
     .map {
       width: 100%;
       height: 100%;
       background:
-        linear-gradient(90deg, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
-        linear-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(116, 129, 150, 0.14) 1px, transparent 1px),
+        linear-gradient(rgba(116, 129, 150, 0.14) 1px, transparent 1px),
         #edf2f7;
-      background-size: 48px 48px;
+      background-size: 56px 56px;
     }
 
-    .section-title {
-      font-size: 13px;
-      font-weight: 700;
-      margin: 14px 0 8px;
+    .leaflet-control-attribution {
+      font-size: 10px;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 920px) {
       .app {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
+        grid-template-rows: minmax(360px, 46vh) 1fr;
+        height: auto;
+        min-height: 100vh;
       }
 
-      .sidebar {
+      .panel {
+        order: 2;
         border-right: 0;
-        border-bottom: 1px solid #d8dee9;
+        border-top: 1px solid var(--border);
       }
 
       .map {
-        min-height: 55vh;
+        order: 1;
+        min-height: 360px;
       }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <aside class="sidebar">
-      <h1>Web-city</h1>
+    <aside class="panel">
+      <header class="panel-header">
+        <h1 class="title">Оценка инфраструктуры</h1>
+        <div class="controls">
+          <div class="field">
+            <label for="profileInput">Профиль</label>
+            <select id="profileInput">
+              <option value="families_with_children">Семьи с детьми</option>
+              <option value="youth">Молодёжь</option>
+              <option value="working_adults">Работающие взрослые</option>
+              <option value="pensioners">Пенсионеры</option>
+              <option value="limited_mobility">Маломобильные группы</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="radiusInput">Радиус</label>
+            <select id="radiusInput">
+              <option value="500">500 м</option>
+              <option value="1000" selected>1000 м</option>
+              <option value="1500">1500 м</option>
+            </select>
+          </div>
+        </div>
+        <div class="status" id="statusBox">Выберите точку на карте.</div>
+      </header>
 
-      <div class="field">
-        <label for="geometryInput">Геометрия</label>
-        <select id="geometryInput">
-          <option value="objects" selected>Точки</option>
-          <option value="areas">Зоны</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="sourceInput">Источник</label>
-        <select id="sourceInput">
-          <option value="">Все</option>
-          <option value="datamos">DataMos</option>
-          <option value="osm">OSM</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="categoryInput">Категория</label>
-        <select id="categoryInput"></select>
-      </div>
-
-      <div class="field">
-        <label for="subcategoryInput">Подкатегория</label>
-        <select id="subcategoryInput"></select>
-      </div>
-
-      <div class="field">
-        <label for="objectTypeInput">Тип объекта</label>
-        <select id="objectTypeInput"></select>
-      </div>
-
-      <div class="field">
-        <label for="limitInput">Лимит</label>
-        <input id="limitInput" type="number" value="3000" min="1" max="50000" />
-      </div>
-
-      <div class="buttons">
-        <button class="primary" id="loadBtn">Показать</button>
-        <button class="secondary" id="clearBtn">Очистить</button>
-      </div>
-
-      <div class="status" id="statusBox">Готово.</div>
-
-      <div class="section-title">Доступные слои</div>
-      <div class="list" id="facetsBox"></div>
+      <section class="result" id="resultBox">
+        <div class="empty">Кликните по карте Москвы, чтобы получить интегральную оценку и перейти к детализации по группам, секциям и простым показателям.</div>
+      </section>
     </aside>
 
     <main id="map" class="map"></main>
@@ -215,60 +310,51 @@
   <script src="/vendor/leaflet/leaflet.js"></script>
   <script>
     const API_BASE = "http://localhost:8080/api/v1";
+    const TILE_URL = "/tiles/base/{z}/{x}/{y}.svg?v=4";
+    const MOSCOW_BOUNDS = [[55.097, 36.722], [56.066, 38.048]];
 
     const map = L.map("map", {
       zoomControl: true,
-      attributionControl: true
+      attributionControl: true,
+      maxBounds: MOSCOW_BOUNDS,
+      maxBoundsViscosity: 1.0,
+      minZoom: 9,
+      maxZoom: 19
     }).setView([55.751244, 37.618423], 10);
 
-    map.attributionControl.addAttribution("© OpenStreetMap contributors");
+    map.attributionControl.setPrefix(false);
 
-    const adminLayers = L.layerGroup().addTo(map);
-    const dataLayer = L.geoJSON(null, {
-      pointToLayer: (feature, latlng) => {
-        const props = feature.properties || {};
-        const color = props.source === "datamos" ? "#0f766e" : "#2563eb";
-        return L.circleMarker(latlng, {
-          radius: 5,
-          color,
-          weight: 2,
-          fillColor: color,
-          fillOpacity: 0.72
-        });
-      },
-      style: (feature) => {
-        const props = feature.properties || {};
-        if (props.object_type === "water" || props.object_type === "wetland") {
-          return {
-            color: "#0284c7",
-            weight: 1,
-            fillColor: "#38bdf8",
-            fillOpacity: 0.28
-          };
-        }
-        return {
-          color: "#15803d",
-          weight: 1,
-          fillColor: "#86efac",
-          fillOpacity: 0.25
-        };
-      },
-      onEachFeature: bindInfrastructurePopup
-    }).addTo(map);
+    if (TILE_URL) {
+      L.tileLayer(TILE_URL, {
+        maxZoom: 19,
+        bounds: MOSCOW_BOUNDS,
+        noWrap: true,
+        updateWhenIdle: true,
+        keepBuffer: 1,
+        attribution: "Локальная подложка: OSM/PostGIS"
+      }).addTo(map);
+    } else {
+      map.attributionControl.addAttribution("Локальная подложка: границы Москвы");
+    }
 
+    const boundaryLayer = L.layerGroup().addTo(map);
+    const selectionLayer = L.layerGroup().addTo(map);
+    const usedObjectsLayer = L.layerGroup().addTo(map);
+
+    const profileInput = document.getElementById("profileInput");
+    const radiusInput = document.getElementById("radiusInput");
     const statusBox = document.getElementById("statusBox");
-    const facetsBox = document.getElementById("facetsBox");
-    const geometryInput = document.getElementById("geometryInput");
-    const sourceInput = document.getElementById("sourceInput");
-    const categoryInput = document.getElementById("categoryInput");
-    const subcategoryInput = document.getElementById("subcategoryInput");
-    const objectTypeInput = document.getElementById("objectTypeInput");
-    const limitInput = document.getElementById("limitInput");
+    const resultBox = document.getElementById("resultBox");
 
-    let facets = [];
+    let selectedPoint = null;
+    let assessment = null;
+    let selectedGroupId = "";
+    let selectedSectionId = "";
+    let municipalityGeoJSON = null;
+    let highlightedMunicipality = null;
 
     function escapeHtml(value) {
-      return String(value)
+      return String(value ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -280,199 +366,368 @@
       statusBox.textContent = message;
     }
 
-    async function fetchJson(url) {
+    function scoreText(score) {
+      if (score === null || score === undefined) return "нет";
+      return String(Math.round(Number(score) * 100));
+    }
+
+    function scorePercent(score) {
+      if (score === null || score === undefined) return 0;
+      return Math.max(0, Math.min(100, Number(score) * 100));
+    }
+
+    function totalScoreText(score) {
+      if (score === null || score === undefined) return "нет";
+      return String(Math.round(Number(score)));
+    }
+
+    function scoreColor(score) {
+      const value = Number(score || 0);
+      if (value >= 0.75) return "var(--good)";
+      if (value >= 0.45) return "var(--mid)";
+      return "var(--bad)";
+    }
+
+    function formatRaw(indicator) {
+      if (indicator.raw_value === null || indicator.raw_value === undefined) return "нет данных";
+      const value = Number(indicator.raw_value);
+      if (indicator.unit === "m") return `${Math.round(value).toLocaleString("ru-RU")} м`;
+      if (indicator.unit === "m2") return `${Math.round(value).toLocaleString("ru-RU")} м²`;
+      if (indicator.unit === "rub_m2") return `${Math.round(value).toLocaleString("ru-RU")} ₽/м²`;
+      if (indicator.unit === "ratio") return value.toLocaleString("ru-RU", { maximumFractionDigits: 2 });
+      return value.toLocaleString("ru-RU", { maximumFractionDigits: 2 });
+    }
+
+    async function fetchJson(url, options = {}) {
       const response = await fetch(url, {
-        headers: { Accept: "application/json" }
+        headers: {
+          Accept: "application/json",
+          ...(options.headers || {})
+        },
+        ...options
       });
-
       if (!response.ok) {
-        throw new Error(`${response.status} ${response.statusText}`);
+        const text = await response.text();
+        throw new Error(text || `${response.status} ${response.statusText}`);
       }
-
       return response.json();
     }
 
-    function bindInfrastructurePopup(feature, layer) {
-      const props = feature.properties || {};
-      const area = props.area_m2 ? `<div><strong>Площадь:</strong> ${Math.round(props.area_m2).toLocaleString("ru-RU")} м²</div>` : "";
-      const popup = `
-        <div style="min-width:240px">
-          <div style="font-weight:700;margin-bottom:6px">${escapeHtml(props.name || "Объект")}</div>
-          <div><strong>Источник:</strong> ${escapeHtml(props.source || "")}</div>
-          <div><strong>Категория:</strong> ${escapeHtml(props.category || "")}</div>
-          <div><strong>Подкатегория:</strong> ${escapeHtml(props.subcategory || "")}</div>
-          <div><strong>Тип:</strong> ${escapeHtml(props.object_type || "")}</div>
-          <div><strong>ID источника:</strong> ${escapeHtml(String(props.source_object_id ?? ""))}</div>
-          ${area}
-        </div>
-      `;
-      layer.bindPopup(popup);
+    async function loadBoundaries() {
+      const [ao, mo] = await Promise.all([
+        fetchJson("/data/ao.geojson"),
+        fetchJson("/data/mo.geojson")
+      ]);
+      municipalityGeoJSON = mo;
+
+      L.geoJSON(mo, {
+        style: {
+          color: "#8a99ad",
+          weight: 1,
+          fillOpacity: 0.02,
+          fillColor: "#dbe5f0"
+        },
+        onEachFeature: (feature, layer) => {
+          layer.bindTooltip(feature.properties?.NAME || "", { sticky: true });
+        }
+      }).addTo(boundaryLayer);
+
+      L.geoJSON(ao, {
+        style: {
+          color: "#415168",
+          weight: 2,
+          fillOpacity: 0
+        }
+      }).addTo(boundaryLayer);
     }
 
-    function option(value, label) {
-      const el = document.createElement("option");
-      el.value = value;
-      el.textContent = label;
-      return el;
+    function renderSelection() {
+      selectionLayer.clearLayers();
+      if (!selectedPoint) return;
+
+      const radius = Number(radiusInput.value || 1000);
+      L.circle(selectedPoint, {
+        radius,
+        color: "#1f6feb",
+        weight: 2,
+        fillColor: "#1f6feb",
+        fillOpacity: 0.08
+      }).addTo(selectionLayer);
+
+      L.marker(selectedPoint).addTo(selectionLayer);
     }
 
-    function uniqueSorted(values) {
-      return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, "ru"));
-    }
+    async function evaluateSelectedPoint() {
+      if (!selectedPoint) return;
 
-    function currentGeometry() {
-      return geometryInput.value === "areas" ? "area" : "object";
-    }
+      renderSelection();
+      setStatus("Расчёт оценки...");
+      usedObjectsLayer.clearLayers();
 
-    function filteredFacets(level) {
-      const geometry = currentGeometry();
-      return facets.filter((item) => {
-        if (item.geometry !== geometry) return false;
-        if (sourceInput.value && item.source !== sourceInput.value) return false;
-        if (level !== "category" && categoryInput.value && item.category !== categoryInput.value) return false;
-        if (level === "object_type" && subcategoryInput.value && item.subcategory !== subcategoryInput.value) return false;
-        return true;
-      });
-    }
+      try {
+        assessment = await fetchJson(`${API_BASE}/assessments/evaluate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lat: selectedPoint.lat,
+            lon: selectedPoint.lng,
+            profile: profileInput.value,
+            radius_m: Number(radiusInput.value || 1000)
+          })
+        });
 
-    function fillSelect(select, values, allLabel) {
-      const current = select.value;
-      select.innerHTML = "";
-      select.appendChild(option("", allLabel));
-      values.forEach((value) => select.appendChild(option(value, value)));
-      if (values.includes(current)) {
-        select.value = current;
+        selectedGroupId = "";
+        selectedSectionId = "";
+        highlightMunicipality();
+        renderAssessment();
+        renderUsedObjects();
+        setStatus("Оценка рассчитана.");
+      } catch (error) {
+        setStatus(`Ошибка расчёта: ${error.message}`);
       }
     }
 
-    function refreshFilters() {
-      fillSelect(categoryInput, uniqueSorted(filteredFacets("category").map((item) => item.category)), "Все");
-      fillSelect(subcategoryInput, uniqueSorted(filteredFacets("subcategory").map((item) => item.subcategory)), "Все");
-      fillSelect(objectTypeInput, uniqueSorted(filteredFacets("object_type").map((item) => item.object_type)), "Все");
-      renderFacets();
+    function highlightMunicipality() {
+      if (highlightedMunicipality) {
+        highlightedMunicipality.remove();
+        highlightedMunicipality = null;
+      }
+      const name = assessment?.municipality?.name;
+      if (!name || !municipalityGeoJSON) return;
+
+      const feature = municipalityGeoJSON.features.find((item) => item.properties?.NAME === name);
+      if (!feature) return;
+
+      highlightedMunicipality = L.geoJSON(feature, {
+        style: {
+          color: "#1f6feb",
+          weight: 3,
+          fillColor: "#1f6feb",
+          fillOpacity: 0.09
+        }
+      }).addTo(selectionLayer);
     }
 
-    function renderFacets() {
-      const geometry = currentGeometry();
-      const rows = facets
-        .filter((item) => item.geometry === geometry)
-        .filter((item) => !sourceInput.value || item.source === sourceInput.value)
-        .filter((item) => !categoryInput.value || item.category === categoryInput.value)
-        .filter((item) => !subcategoryInput.value || item.subcategory === subcategoryInput.value)
-        .filter((item) => !objectTypeInput.value || item.object_type === objectTypeInput.value);
-
-      facetsBox.innerHTML = "";
-      if (!rows.length) {
-        facetsBox.innerHTML = '<div class="item">Нет данных</div>';
+    function renderAssessment() {
+      if (!assessment) {
+        resultBox.innerHTML = '<div class="empty">Выберите точку на карте.</div>';
         return;
       }
 
-      rows.forEach((item) => {
-        const row = document.createElement("div");
-        row.className = "item";
-        row.innerHTML = `
-          <strong>${escapeHtml(item.object_type)} (${Number(item.count).toLocaleString("ru-RU")})</strong>
-          ${escapeHtml(item.source)} / ${escapeHtml(item.category)} / ${escapeHtml(item.subcategory)}
+      const municipality = assessment.municipality?.name || "вне границ муниципалитетов";
+      const score = Number(assessment.score || 0);
+
+      resultBox.innerHTML = `
+        <div class="score-box">
+          <div class="score" style="background:${scoreColor(score / 100)}">${totalScoreText(score)}</div>
+          <div class="meta">
+            <div><strong>${escapeHtml(assessment.profile_title || assessment.profile)}</strong></div>
+            <div>Муниципалитет: <strong>${escapeHtml(municipality)}</strong></div>
+            <div>Радиус: <strong>${Number(assessment.radius_m).toLocaleString("ru-RU")} м</strong></div>
+            <div>Координаты: ${assessment.lat.toFixed(5)}, ${assessment.lon.toFixed(5)}</div>
+          </div>
+        </div>
+        ${renderDrilldown()}
+      `;
+      attachResultHandlers();
+    }
+
+    function renderDrilldown() {
+      const group = assessment.groups.find((item) => item.id === selectedGroupId);
+      const section = group?.sections.find((item) => item.id === selectedSectionId);
+
+      if (section) {
+        return `
+          <div class="nav">
+            <button class="back" data-action="back-section">Назад</button>
+            <div class="crumb">${escapeHtml(group.title)} / ${escapeHtml(section.title)}</div>
+          </div>
+          <div class="rows">
+            ${section.indicators.map(renderIndicatorRow).join("")}
+          </div>
         `;
-        row.addEventListener("click", () => {
-          geometryInput.value = item.geometry === "area" ? "areas" : "objects";
-          sourceInput.value = item.source;
-          refreshFilters();
-          categoryInput.value = item.category;
-          refreshFilters();
-          subcategoryInput.value = item.subcategory;
-          refreshFilters();
-          objectTypeInput.value = item.object_type;
-          renderFacets();
-          loadInfrastructure();
+      }
+
+      if (group) {
+        return `
+          <div class="nav">
+            <button class="back" data-action="back-group">Назад</button>
+            <div class="crumb">${escapeHtml(group.title)}</div>
+          </div>
+          <div class="rows">
+            ${group.sections.map(renderSectionRow).join("")}
+          </div>
+        `;
+      }
+
+      return `
+        <div class="rows">
+          ${assessment.groups.map(renderGroupRow).join("")}
+        </div>
+      `;
+    }
+
+    function renderGroupRow(group) {
+      return `
+        <button class="row" data-group-id="${escapeHtml(group.id)}">
+          <div class="row-top">
+            <div class="row-title">${escapeHtml(group.title)}</div>
+            <div class="row-score">${scoreText(group.score)}</div>
+          </div>
+          <div class="bar"><div class="bar-fill" style="width:${scorePercent(group.score)}%;background:${scoreColor(group.score)}"></div></div>
+          <div class="details">Вес группы: ${group.weight.toLocaleString("ru-RU", { maximumFractionDigits: 3 })}</div>
+        </button>
+      `;
+    }
+
+    function renderSectionRow(section) {
+      return `
+        <button class="row" data-section-id="${escapeHtml(section.id)}">
+          <div class="row-top">
+            <div class="row-title">${escapeHtml(section.title)}</div>
+            <div class="row-score">${scoreText(section.score)}</div>
+          </div>
+          <div class="bar"><div class="bar-fill" style="width:${scorePercent(section.score)}%;background:${scoreColor(section.score)}"></div></div>
+          <div class="details">Вес секции: ${section.weight.toLocaleString("ru-RU", { maximumFractionDigits: 3 })}</div>
+        </button>
+      `;
+    }
+
+    function renderIndicatorRow(indicator) {
+      const object = indicator.nearest_object;
+      const objectText = object ? `<div>Объект: ${escapeHtml(object.name)}</div>` : "";
+      const status = indicator.status === "ok" ? "" : `<div>${escapeHtml(indicator.message || indicator.status)}</div>`;
+      return `
+        <button class="row" data-indicator-id="${escapeHtml(indicator.id)}">
+          <div class="row-top">
+            <div class="row-title">${escapeHtml(indicator.title)}</div>
+            <div class="row-score">${scoreText(indicator.score)}</div>
+          </div>
+          <div class="bar"><div class="bar-fill" style="width:${scorePercent(indicator.score)}%;background:${scoreColor(indicator.score)}"></div></div>
+          <div class="details">
+            <div>Значение: ${escapeHtml(formatRaw(indicator))}</div>
+            <div>Вес показателя: ${indicator.weight.toLocaleString("ru-RU", { maximumFractionDigits: 3 })}</div>
+            ${objectText}
+            ${status}
+          </div>
+        </button>
+      `;
+    }
+
+    function attachResultHandlers() {
+      resultBox.querySelectorAll("[data-group-id]").forEach((el) => {
+        el.addEventListener("click", () => {
+          selectedGroupId = el.dataset.groupId;
+          selectedSectionId = "";
+          renderAssessment();
+          renderUsedObjects();
         });
-        facetsBox.appendChild(row);
       });
-    }
 
-    async function loadFacets() {
-      const data = await fetchJson(`${API_BASE}/infrastructure/facets`);
-      facets = data;
-      refreshFilters();
-      setStatus(`Слоёв: ${facets.length}.`);
-    }
+      resultBox.querySelectorAll("[data-section-id]").forEach((el) => {
+        el.addEventListener("click", () => {
+          selectedSectionId = el.dataset.sectionId;
+          renderAssessment();
+          renderUsedObjects();
+        });
+      });
 
-    async function loadBoundaries() {
-      try {
-        const [ao, mo] = await Promise.all([
-          fetchJson("/data/ao.geojson"),
-          fetchJson("/data/mo.geojson")
-        ]);
+      resultBox.querySelectorAll("[data-indicator-id]").forEach((el) => {
+        el.addEventListener("click", () => {
+          renderUsedObjects(el.dataset.indicatorId);
+        });
+      });
 
-        L.geoJSON(mo, {
-          style: {
-            color: "#64748b",
-            weight: 1,
-            fillOpacity: 0
-          },
-          onEachFeature: (feature, layer) => {
-            layer.bindTooltip(feature.properties?.NAME || "", { sticky: true });
-          }
-        }).addTo(adminLayers);
+      const backSection = resultBox.querySelector('[data-action="back-section"]');
+      if (backSection) {
+        backSection.addEventListener("click", () => {
+          selectedSectionId = "";
+          renderAssessment();
+          renderUsedObjects();
+        });
+      }
 
-        L.geoJSON(ao, {
-          style: {
-            color: "#334155",
-            weight: 2,
-            fillOpacity: 0
-          }
-        }).addTo(adminLayers);
-      } catch (error) {
-        setStatus(`Границы не загружены: ${error.message}`);
+      const backGroup = resultBox.querySelector('[data-action="back-group"]');
+      if (backGroup) {
+        backGroup.addEventListener("click", () => {
+          selectedGroupId = "";
+          selectedSectionId = "";
+          renderAssessment();
+          renderUsedObjects();
+        });
       }
     }
 
-    function clearMap() {
-      dataLayer.clearLayers();
-      setStatus("Слой очищен.");
+    function currentVisibleIndicators(indicatorId = "") {
+      if (!assessment) return [];
+      if (indicatorId) {
+        return assessment.indicators.filter((indicator) => indicator.id === indicatorId);
+      }
+      if (selectedSectionId) {
+        return assessment.indicators.filter((indicator) => indicator.section_id === selectedSectionId);
+      }
+      if (selectedGroupId) {
+        return assessment.indicators.filter((indicator) => indicator.group_id === selectedGroupId);
+      }
+      return assessment.indicators;
     }
 
-    async function loadInfrastructure() {
-      const geometry = geometryInput.value;
-      const endpoint = geometry === "areas" ? "areas" : "objects";
-      const params = new URLSearchParams({
-        limit: String(Number(limitInput.value || 1000))
-      });
+    function renderUsedObjects(indicatorId = "") {
+      usedObjectsLayer.clearLayers();
+      const indicators = currentVisibleIndicators(indicatorId);
+      const seen = new Set();
+      const bounds = [];
 
-      if (sourceInput.value) params.set("source", sourceInput.value);
-      if (categoryInput.value) params.set("category", categoryInput.value);
-      if (subcategoryInput.value) params.set("subcategory", subcategoryInput.value);
-      if (objectTypeInput.value) params.set("object_type", objectTypeInput.value);
-
-      setStatus("Загрузка слоя...");
-      try {
-        const geojson = await fetchJson(`${API_BASE}/infrastructure/${endpoint}?${params.toString()}`);
-        dataLayer.clearLayers();
-        dataLayer.addData(geojson);
-
-        const count = geojson.features ? geojson.features.length : 0;
-        if (count > 0) {
-          const bounds = dataLayer.getBounds();
-          if (bounds.isValid()) {
-            map.fitBounds(bounds.pad(0.08));
-          }
+      indicators.forEach((indicator) => {
+        const object = indicator.nearest_object;
+        if (!object || seen.has(`${object.source}:${object.source_dataset_id}:${object.source_object_id}:${object.source_point_index}`)) {
+          return;
         }
+        seen.add(`${object.source}:${object.source_dataset_id}:${object.source_object_id}:${object.source_point_index}`);
 
-        setStatus(`Загружено: ${count.toLocaleString("ru-RU")}.`);
-      } catch (error) {
-        setStatus(`Ошибка загрузки: ${error.message}`);
+        const latlng = objectLatLngFromSelectedPoint(object);
+        if (!latlng) return;
+
+        const marker = L.circleMarker(latlng, {
+          radius: 6,
+          color: "#c2410c",
+          weight: 2,
+          fillColor: "#f97316",
+          fillOpacity: 0.82
+        }).addTo(usedObjectsLayer);
+        marker.bindPopup(`
+          <div style="min-width:220px">
+            <div style="font-weight:700;margin-bottom:5px">${escapeHtml(object.name)}</div>
+            <div>${escapeHtml(object.object_type)}</div>
+            <div>Расстояние: ${Math.round(object.distance_m).toLocaleString("ru-RU")} м</div>
+          </div>
+        `);
+        bounds.push(latlng);
+      });
+
+      if (bounds.length && indicatorId) {
+        map.fitBounds(L.latLngBounds(bounds.concat(selectedPoint ? [selectedPoint] : [])).pad(0.18));
       }
     }
 
-    [geometryInput, sourceInput, categoryInput, subcategoryInput, objectTypeInput].forEach((el) => {
-      el.addEventListener("change", refreshFilters);
+    function objectLatLngFromSelectedPoint(object) {
+      if (Number.isFinite(object.lat) && Number.isFinite(object.lon)) {
+        return L.latLng(object.lat, object.lon);
+      }
+      return null;
+    }
+
+    map.on("click", (event) => {
+      selectedPoint = event.latlng;
+      evaluateSelectedPoint();
     });
 
-    document.getElementById("loadBtn").addEventListener("click", loadInfrastructure);
-    document.getElementById("clearBtn").addEventListener("click", clearMap);
+    profileInput.addEventListener("change", evaluateSelectedPoint);
+    radiusInput.addEventListener("change", evaluateSelectedPoint);
 
-    loadBoundaries();
-    loadFacets().catch((error) => setStatus(`Ошибка справочника: ${error.message}`));
+    loadBoundaries()
+      .then(() => setStatus("Выберите точку на карте."))
+      .catch((error) => setStatus(`Границы не загружены: ${error.message}`));
   </script>
 </body>
 </html>

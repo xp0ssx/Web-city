@@ -12,6 +12,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"web-city/api/internal/assessment"
 	"web-city/api/internal/handlers"
 	"web-city/api/internal/store"
 )
@@ -42,12 +43,23 @@ func main() {
 	dbStore := store.New(db)
 	tagsHandler := handlers.NewTagsHandler(dbStore)
 	infrastructureHandler := handlers.NewInfrastructureHandler(dbStore)
+	tileHandler := handlers.NewTileHandler(dbStore, getEnv("TILE_CACHE_DIR", ""))
+	assessmentService, err := assessment.NewService(
+		dbStore,
+		getEnv("ASSESSMENT_CONFIG_FILE", "config/assessment_indicators.json"),
+		getEnv("ASSESSMENT_WEIGHTS_FILE", "config/assessment_weights.json"),
+	)
+	if err != nil {
+		log.Fatalf("assessment service init error: %v", err)
+	}
+	assessmentHandler := handlers.NewAssessmentHandler(assessmentService)
 
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.Compress(5, "application/json", "image/svg+xml"))
 	r.Use(corsMiddleware)
 
 	r.Get("/healthz", healthHandler(db))
@@ -64,6 +76,12 @@ func main() {
 		r.Get("/objects", infrastructureHandler.Objects)
 		r.Get("/areas", infrastructureHandler.Areas)
 	})
+
+	r.Route("/api/v1/assessments", func(r chi.Router) {
+		r.Post("/evaluate", assessmentHandler.Evaluate)
+	})
+
+	r.Get("/api/v1/tiles/base/{z}/{x}/{y}", tileHandler.BaseSVG)
 
 	srv := &http.Server{
 		Addr:              ":" + port,

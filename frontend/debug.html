@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web-city Data Explorer</title>
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
+  <style>
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      color: #0f172a;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      height: 100vh;
+    }
+
+    .sidebar {
+      padding: 16px;
+      border-right: 1px solid #d8dee9;
+      overflow: auto;
+      background: #f7f9fb;
+    }
+
+    .sidebar h1 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #475569;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 9px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    button {
+      padding: 9px 10px;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .secondary {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .status {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: #e8f0ff;
+      color: #1e3a8a;
+      font-size: 13px;
+      line-height: 1.4;
+      min-height: 18px;
+    }
+
+    .list {
+      margin-top: 10px;
+      max-height: 280px;
+      overflow: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      background: white;
+    }
+
+    .item {
+      padding: 9px 10px;
+      border-bottom: 1px solid #e2e8f0;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .item:last-child {
+      border-bottom: 0;
+    }
+
+    .item:hover {
+      background: #f1f5f9;
+    }
+
+    .item strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+
+    .map {
+      width: 100%;
+      height: 100%;
+      background:
+        linear-gradient(90deg, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+        linear-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+        #edf2f7;
+      background-size: 48px 48px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin: 14px 0 8px;
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid #d8dee9;
+      }
+
+      .map {
+        min-height: 55vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>Web-city</h1>
+
+      <div class="field">
+        <label for="geometryInput">Геометрия</label>
+        <select id="geometryInput">
+          <option value="objects" selected>Точки</option>
+          <option value="areas">Зоны</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="sourceInput">Источник</label>
+        <select id="sourceInput">
+          <option value="">Все</option>
+          <option value="datamos">DataMos</option>
+          <option value="osm">OSM</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="categoryInput">Категория</label>
+        <select id="categoryInput"></select>
+      </div>
+
+      <div class="field">
+        <label for="subcategoryInput">Подкатегория</label>
+        <select id="subcategoryInput"></select>
+      </div>
+
+      <div class="field">
+        <label for="objectTypeInput">Тип объекта</label>
+        <select id="objectTypeInput"></select>
+      </div>
+
+      <div class="field">
+        <label for="limitInput">Лимит</label>
+        <input id="limitInput" type="number" value="3000" min="1" max="50000" />
+      </div>
+
+      <div class="buttons">
+        <button class="primary" id="loadBtn">Показать</button>
+        <button class="secondary" id="clearBtn">Очистить</button>
+      </div>
+
+      <div class="status" id="statusBox">Готово.</div>
+
+      <div class="section-title">Доступные слои</div>
+      <div class="list" id="facetsBox"></div>
+    </aside>
+
+    <main id="map" class="map"></main>
+  </div>
+
+  <script src="/vendor/leaflet/leaflet.js"></script>
+  <script>
+    const API_BASE = "http://localhost:8080/api/v1";
+    const TILE_URL = "/tiles/base/{z}/{x}/{y}.svg?v=4";
+    const MOSCOW_BOUNDS = [[55.097, 36.722], [56.066, 38.048]];
+
+    const map = L.map("map", {
+      zoomControl: true,
+      attributionControl: true,
+      maxBounds: MOSCOW_BOUNDS,
+      maxBoundsViscosity: 1.0,
+      minZoom: 9,
+      maxZoom: 19
+    }).setView([55.751244, 37.618423], 10);
+
+    map.attributionControl.setPrefix(false);
+
+    L.tileLayer(TILE_URL, {
+      maxZoom: 19,
+      bounds: MOSCOW_BOUNDS,
+      noWrap: true,
+      updateWhenIdle: true,
+      keepBuffer: 1,
+      attribution: "Локальная подложка: OSM/PostGIS"
+    }).addTo(map);
+
+    const adminLayers = L.layerGroup().addTo(map);
+    const dataLayer = L.geoJSON(null, {
+      pointToLayer: (feature, latlng) => {
+        const props = feature.properties || {};
+        const color = props.source === "datamos" ? "#0f766e" : "#2563eb";
+        return L.circleMarker(latlng, {
+          radius: 5,
+          color,
+          weight: 2,
+          fillColor: color,
+          fillOpacity: 0.72
+        });
+      },
+      style: (feature) => {
+        const props = feature.properties || {};
+        if (props.object_type === "water" || props.object_type === "wetland") {
+          return {
+            color: "#0284c7",
+            weight: 1,
+            fillColor: "#38bdf8",
+            fillOpacity: 0.28
+          };
+        }
+        return {
+          color: "#15803d",
+          weight: 1,
+          fillColor: "#86efac",
+          fillOpacity: 0.25
+        };
+      },
+      onEachFeature: bindInfrastructurePopup
+    }).addTo(map);
+
+    const statusBox = document.getElementById("statusBox");
+    const facetsBox = document.getElementById("facetsBox");
+    const geometryInput = document.getElementById("geometryInput");
+    const sourceInput = document.getElementById("sourceInput");
+    const categoryInput = document.getElementById("categoryInput");
+    const subcategoryInput = document.getElementById("subcategoryInput");
+    const objectTypeInput = document.getElementById("objectTypeInput");
+    const limitInput = document.getElementById("limitInput");
+
+    let facets = [];
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function setStatus(message) {
+      statusBox.textContent = message;
+    }
+
+    async function fetchJson(url) {
+      const response = await fetch(url, {
+        headers: { Accept: "application/json" }
+      });
+
+      if (!response.ok) {
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
+
+      return response.json();
+    }
+
+    function bindInfrastructurePopup(feature, layer) {
+      const props = feature.properties || {};
+      const area = props.area_m2 ? `<div><strong>Площадь:</strong> ${Math.round(props.area_m2).toLocaleString("ru-RU")} м²</div>` : "";
+      const popup = `
+        <div style="min-width:240px">
+          <div style="font-weight:700;margin-bottom:6px">${escapeHtml(props.name || "Объект")}</div>
+          <div><strong>Источник:</strong> ${escapeHtml(props.source || "")}</div>
+          <div><strong>Категория:</strong> ${escapeHtml(props.category || "")}</div>
+          <div><strong>Подкатегория:</strong> ${escapeHtml(props.subcategory || "")}</div>
+          <div><strong>Тип:</strong> ${escapeHtml(props.object_type || "")}</div>
+          <div><strong>ID источника:</strong> ${escapeHtml(String(props.source_object_id ?? ""))}</div>
+          ${area}
+        </div>
+      `;
+      layer.bindPopup(popup);
+    }
+
+    function option(value, label) {
+      const el = document.createElement("option");
+      el.value = value;
+      el.textContent = label;
+      return el;
+    }
+
+    function uniqueSorted(values) {
+      return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, "ru"));
+    }
+
+    function currentGeometry() {
+      return geometryInput.value === "areas" ? "area" : "object";
+    }
+
+    function filteredFacets(level) {
+      const geometry = currentGeometry();
+      return facets.filter((item) => {
+        if (item.geometry !== geometry) return false;
+        if (sourceInput.value && item.source !== sourceInput.value) return false;
+        if (level !== "category" && categoryInput.value && item.category !== categoryInput.value) return false;
+        if (level === "object_type" && subcategoryInput.value && item.subcategory !== subcategoryInput.value) return false;
+        return true;
+      });
+    }
+
+    function fillSelect(select, values, allLabel) {
+      const current = select.value;
+      select.innerHTML = "";
+      select.appendChild(option("", allLabel));
+      values.forEach((value) => select.appendChild(option(value, value)));
+      if (values.includes(current)) {
+        select.value = current;
+      }
+    }
+
+    function refreshFilters() {
+      fillSelect(categoryInput, uniqueSorted(filteredFacets("category").map((item) => item.category)), "Все");
+      fillSelect(subcategoryInput, uniqueSorted(filteredFacets("subcategory").map((item) => item.subcategory)), "Все");
+      fillSelect(objectTypeInput, uniqueSorted(filteredFacets("object_type").map((item) => item.object_type)), "Все");
+      renderFacets();
+    }
+
+    function renderFacets() {
+      const geometry = currentGeometry();
+      const rows = facets
+        .filter((item) => item.geometry === geometry)
+        .filter((item) => !sourceInput.value || item.source === sourceInput.value)
+        .filter((item) => !categoryInput.value || item.category === categoryInput.value)
+        .filter((item) => !subcategoryInput.value || item.subcategory === subcategoryInput.value)
+        .filter((item) => !objectTypeInput.value || item.object_type === objectTypeInput.value);
+
+      facetsBox.innerHTML = "";
+      if (!rows.length) {
+        facetsBox.innerHTML = '<div class="item">Нет данных</div>';
+        return;
+      }
+
+      rows.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "item";
+        row.innerHTML = `
+          <strong>${escapeHtml(item.object_type)} (${Number(item.count).toLocaleString("ru-RU")})</strong>
+          ${escapeHtml(item.source)} / ${escapeHtml(item.category)} / ${escapeHtml(item.subcategory)}
+        `;
+        row.addEventListener("click", () => {
+          geometryInput.value = item.geometry === "area" ? "areas" : "objects";
+          sourceInput.value = item.source;
+          refreshFilters();
+          categoryInput.value = item.category;
+          refreshFilters();
+          subcategoryInput.value = item.subcategory;
+          refreshFilters();
+          objectTypeInput.value = item.object_type;
+          renderFacets();
+          loadInfrastructure();
+        });
+        facetsBox.appendChild(row);
+      });
+    }
+
+    async function loadFacets() {
+      const data = await fetchJson(`${API_BASE}/infrastructure/facets`);
+      facets = data;
+      refreshFilters();
+      setStatus(`Слоёв: ${facets.length}.`);
+    }
+
+    async function loadBoundaries() {
+      try {
+        const [ao, mo] = await Promise.all([
+          fetchJson("/data/ao.geojson"),
+          fetchJson("/data/mo.geojson")
+        ]);
+
+        L.geoJSON(mo, {
+          style: {
+            color: "#64748b",
+            weight: 1,
+            fillOpacity: 0
+          },
+          onEachFeature: (feature, layer) => {
+            layer.bindTooltip(feature.properties?.NAME || "", { sticky: true });
+          }
+        }).addTo(adminLayers);
+
+        L.geoJSON(ao, {
+          style: {
+            color: "#334155",
+            weight: 2,
+            fillOpacity: 0
+          }
+        }).addTo(adminLayers);
+      } catch (error) {
+        setStatus(`Границы не загружены: ${error.message}`);
+      }
+    }
+
+    function clearMap() {
+      dataLayer.clearLayers();
+      setStatus("Слой очищен.");
+    }
+
+    async function loadInfrastructure() {
+      const geometry = geometryInput.value;
+      const endpoint = geometry === "areas" ? "areas" : "objects";
+      const params = new URLSearchParams({
+        limit: String(Number(limitInput.value || 1000))
+      });
+
+      if (sourceInput.value) params.set("source", sourceInput.value);
+      if (categoryInput.value) params.set("category", categoryInput.value);
+      if (subcategoryInput.value) params.set("subcategory", subcategoryInput.value);
+      if (objectTypeInput.value) params.set("object_type", objectTypeInput.value);
+
+      setStatus("Загрузка слоя...");
+      try {
+        const geojson = await fetchJson(`${API_BASE}/infrastructure/${endpoint}?${params.toString()}`);
+        dataLayer.clearLayers();
+        dataLayer.addData(geojson);
+
+        const count = geojson.features ? geojson.features.length : 0;
+        if (count > 0) {
+          const bounds = dataLayer.getBounds();
+          if (bounds.isValid()) {
+            map.fitBounds(bounds.pad(0.08));
+          }
+        }
+
+        setStatus(`Загружено: ${count.toLocaleString("ru-RU")}.`);
+      } catch (error) {
+        setStatus(`Ошибка загрузки: ${error.message}`);
+      }
+    }
+
+    [geometryInput, sourceInput, categoryInput, subcategoryInput, objectTypeInput].forEach((el) => {
+      el.addEventListener("change", refreshFilters);
+    });
+
+    document.getElementById("loadBtn").addEventListener("click", loadInfrastructure);
+    document.getElementById("clearBtn").addEventListener("click", clearMap);
+
+    loadBoundaries();
+    loadFacets().catch((error) => setStatus(`Ошибка справочника: ${error.message}`));
+  </script>
+</body>
+</html>
