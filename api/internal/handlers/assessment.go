@@ -17,6 +17,10 @@ func NewAssessmentHandler(service *assessment.Service) *AssessmentHandler {
 	return &AssessmentHandler{service: service}
 }
 
+func (h *AssessmentHandler) Config(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusOK, h.service.ConfigResponse())
+}
+
 func (h *AssessmentHandler) Evaluate(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 

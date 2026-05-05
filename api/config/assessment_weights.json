@@ -39,13 +39,22 @@
       "pharmacy_count": 0.20
     },
     "household_infrastructure_accessibility": {
-      "repair_service_type_count": 0.50,
-      "nearest_market_distance": 0.50
+      "nearest_hairdresser_distance": 0.125,
+      "hairdresser_count": 0.125,
+      "nearest_beauty_salon_distance": 0.125,
+      "beauty_salon_count": 0.125,
+      "repair_service_count": 0.125,
+      "repair_service_type_count": 0.125,
+      "nearest_market_distance": 0.125,
+      "market_count": 0.125
     },
     "environmental_conditions": {
-      "nearest_industrial_enterprise_distance": 0.25,
-      "industrial_enterprise_count": 0.25,
-      "nearest_waste_site_distance": 0.50
+      "nearest_industrial_enterprise_distance": 0.125,
+      "industrial_enterprise_count": 0.125,
+      "nearest_industrial_complex_distance": 0.125,
+      "industrial_complex_count": 0.125,
+      "nearest_waste_site_distance": 0.250,
+      "waste_site_count": 0.250
     },
     "natural_recreation_potential": {
       "water_area_m2": 0.50,
@@ -54,10 +63,14 @@
     },
     "cultural_leisure_infrastructure": {
       "cultural_heritage_area_m2": 0.125,
-      "culture_object_type_count": 0.125,
-      "catering_leisure_type_count": 0.250,
-      "sports_infrastructure_type_count": 0.250,
-      "nearest_children_leisure_place_distance": 0.250
+      "culture_object_count": 0.063,
+      "culture_object_type_count": 0.062,
+      "catering_leisure_count": 0.125,
+      "catering_leisure_type_count": 0.125,
+      "sports_infrastructure_count": 0.125,
+      "sports_infrastructure_type_count": 0.125,
+      "nearest_children_leisure_place_distance": 0.125,
+      "children_leisure_place_count": 0.125
     },
     "emergency_services": {
       "nearest_fire_station_distance": 0.35,

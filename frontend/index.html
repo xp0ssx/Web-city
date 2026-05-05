@@ -96,6 +96,396 @@
       line-height: 1.35;
     }
 
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .action-button {
+      min-height: 32px;
+      padding: 6px 10px;
+      border: 1px solid #c9d3e0;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .action-button:hover:not(:disabled) {
+      border-color: #9ab8e8;
+      background: #fbfdff;
+    }
+
+    .action-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .help-button {
+      width: 32px;
+      padding: 0;
+      border-radius: 50%;
+      font-weight: 700;
+    }
+
+    .weights-panel {
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .weights-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .weights-body {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .weight-row {
+      display: grid;
+      grid-template-columns: 1fr 74px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .weight-row label {
+      min-width: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .weight-row input {
+      width: 100%;
+      min-height: 32px;
+      padding: 6px 8px;
+      border: 1px solid #c9d3e0;
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .weights-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .weights-total.invalid {
+      color: var(--bad);
+      font-weight: 700;
+    }
+
+    .weights-state {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.42);
+    }
+
+    .modal[hidden] {
+      display: none;
+    }
+
+    .modal-dialog {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      width: min(960px, 100%);
+      max-height: min(760px, 92vh);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 20px 55px rgba(15, 23, 42, 0.24);
+    }
+
+    .modal-header,
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-footer {
+      border-top: 1px solid var(--border);
+      border-bottom: 0;
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .modal-body {
+      overflow: auto;
+      padding: 14px 16px;
+      background: #f8fafc;
+    }
+
+    .help-content {
+      display: grid;
+      gap: 14px;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .help-content section {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .help-content h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .help-content p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .help-content ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .help-content li {
+      margin: 4px 0;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .primary-button {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .primary-button:hover:not(:disabled) {
+      border-color: #195fc9;
+      background: #195fc9;
+    }
+
+    .weight-tree {
+      display: grid;
+      gap: 8px;
+    }
+
+    .weight-branch {
+      display: grid;
+      gap: 8px;
+    }
+
+    .weight-branch summary {
+      display: block;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .weight-branch summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .weight-branch summary .weight-node {
+      position: relative;
+    }
+
+    .weight-branch summary .weight-node::before {
+      content: "+";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translateY(-50%);
+      border: 1px solid #c9d3e0;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .weight-branch[open] > summary .weight-node::before {
+      content: "-";
+    }
+
+    .weight-node {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 84px;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
+      border: 1px solid #dce3ee;
+      border-left-width: 5px;
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    .weight-node.level-group {
+      border-left-color: #1f6feb;
+      background: #f2f7ff;
+    }
+
+    .weight-node.level-section {
+      margin-left: 18px;
+      border-left-color: #12805c;
+      background: #f3fbf7;
+    }
+
+    .weight-node.level-subsection {
+      margin-left: 36px;
+      border-left-color: #b7791f;
+      background: #fffaf0;
+    }
+
+    .weight-node.level-indicator {
+      margin-left: 54px;
+      border-left-color: #8a99ad;
+      background: #fff;
+    }
+
+    .weight-label {
+      min-width: 0;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .weight-label small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .weight-kind {
+      display: inline-block;
+      margin: 0 6px 3px 0;
+      padding: 2px 6px;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .weight-kind.level-group {
+      background: #1f6feb;
+    }
+
+    .weight-kind.level-section {
+      background: #12805c;
+    }
+
+    .weight-kind.level-subsection {
+      background: #b7791f;
+    }
+
+    .weight-kind.level-indicator {
+      background: #667085;
+    }
+
+    .weight-node input {
+      width: 100%;
+      min-height: 32px;
+      padding: 6px 8px;
+      border: 1px solid #c9d3e0;
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .weight-total-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 12px 0 2px;
+      padding: 7px 10px;
+      border: 1px solid #cfd8e6;
+      border-left: 5px solid #415168;
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      background: #eef3f9;
+    }
+
+    .weight-total-row.total-groups {
+      margin-top: 0;
+      border-left-color: #1f6feb;
+      background: #e8f1ff;
+    }
+
+    .weight-total-row.total-sections {
+      margin-left: 18px;
+      border-left-color: #12805c;
+      background: #eaf7f0;
+    }
+
+    .weight-total-row.total-subsections {
+      margin-left: 36px;
+      border-left-color: #b7791f;
+      background: #fff4dd;
+    }
+
+    .weight-total-row.total-indicators {
+      margin-left: 54px;
+      border-left-color: #8a99ad;
+      background: #f1f4f8;
+    }
+
+    .weight-total-row.invalid {
+      color: var(--bad);
+      font-weight: 700;
+      background: #fff4ed;
+    }
+
     .result {
       padding: 16px;
       overflow: auto;
@@ -297,6 +687,12 @@
           </div>
         </div>
         <div class="status" id="statusBox">Выберите точку на карте.</div>
+        <div class="actions">
+          <button class="action-button" id="editWeightsButton" type="button">Изменить веса</button>
+          <button class="action-button" id="resetWeightsButton" type="button">Сбросить веса</button>
+          <button class="action-button" id="shareButton" type="button" disabled>Поделиться</button>
+          <span class="weights-state" id="weightsMode">профиль</span>
+        </div>
       </header>
 
       <section class="result" id="resultBox">
@@ -307,9 +703,29 @@
     <main id="map" class="map"></main>
   </div>
 
+  <div class="modal" id="weightsModal" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="weightsModalTitle">
+      <div class="modal-header">
+        <h2 class="modal-title" id="weightsModalTitle">Редактор весов</h2>
+        <button class="action-button" id="closeWeightsButton" type="button">Закрыть</button>
+      </div>
+      <div class="modal-body">
+        <div class="weight-tree" id="weightsTree"></div>
+      </div>
+      <div class="modal-footer">
+        <span class="weights-total" id="weightsTotal">Сумма: 100%</span>
+        <div class="modal-actions">
+          <button class="action-button" id="resetDraftWeightsButton" type="button">Вернуть профиль</button>
+          <button class="action-button" id="cancelWeightsButton" type="button">Отмена</button>
+          <button class="action-button primary-button" id="applyWeightsButton" type="button">Применить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="/vendor/leaflet/leaflet.js"></script>
   <script>
-    const API_BASE = "http://localhost:8080/api/v1";
+    const API_BASE = "/api/v1";
     const TILE_URL = "/tiles/base/{z}/{x}/{y}.svg?v=4";
     const MOSCOW_BOUNDS = [[55.097, 36.722], [56.066, 38.048]];
 
@@ -346,13 +762,31 @@
     const radiusInput = document.getElementById("radiusInput");
     const statusBox = document.getElementById("statusBox");
     const resultBox = document.getElementById("resultBox");
+    const shareButton = document.getElementById("shareButton");
+    const editWeightsButton = document.getElementById("editWeightsButton");
+    const resetWeightsButton = document.getElementById("resetWeightsButton");
+    const weightsModal = document.getElementById("weightsModal");
+    const weightsTree = document.getElementById("weightsTree");
+    const weightsMode = document.getElementById("weightsMode");
+    const weightsTotal = document.getElementById("weightsTotal");
+    const closeWeightsButton = document.getElementById("closeWeightsButton");
+    const cancelWeightsButton = document.getElementById("cancelWeightsButton");
+    const resetDraftWeightsButton = document.getElementById("resetDraftWeightsButton");
+    const applyWeightsButton = document.getElementById("applyWeightsButton");
 
     let selectedPoint = null;
     let assessment = null;
+    let assessmentConfig = null;
+    let customWeights = null;
+    let draftWeights = null;
     let selectedGroupId = "";
     let selectedSectionId = "";
+    let selectedSubsectionId = "";
     let municipalityGeoJSON = null;
     let highlightedMunicipality = null;
+    let evaluationRequestId = 0;
+
+    editWeightsButton.disabled = true;
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -365,6 +799,337 @@
 
     function setStatus(message) {
       statusBox.textContent = message;
+    }
+
+    function setSelectedPoint(latlng, updateUrl = true) {
+      selectedPoint = latlng;
+      shareButton.disabled = !selectedPoint;
+      if (updateUrl) {
+        updateShareUrl();
+      }
+    }
+
+    function validSelectValue(select, value) {
+      return Array.from(select.options).some((option) => option.value === value);
+    }
+
+    function selectedRadius() {
+      return Number(radiusInput.value || 1000);
+    }
+
+    function deepClone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function selectedProfileConfig() {
+      return assessmentConfig?.profiles.find((profile) => profile.id === profileInput.value) ||
+        assessmentConfig?.profiles.find((profile) => profile.id === assessmentConfig.default_profile_id) ||
+        assessmentConfig?.profiles[0];
+    }
+
+    function profileWeights() {
+      const profile = selectedProfileConfig();
+      if (!profile) return null;
+      return {
+        group_weights_percent: deepClone(profile.group_weights_percent),
+        section_weights_percent: deepClone(profile.section_weights_percent),
+        subsection_weights_percent: deepClone(profile.subsection_weights_percent),
+        indicator_weights_percent: deepClone(profile.indicator_weights_percent)
+      };
+    }
+
+    function activeWeights() {
+      return deepClone(customWeights || profileWeights());
+    }
+
+    function weightsAreCustom() {
+      return Boolean(customWeights);
+    }
+
+    function updateWeightsState() {
+      weightsMode.textContent = weightsAreCustom() ? "пользовательские веса" : "веса профиля";
+      resetWeightsButton.disabled = !weightsAreCustom();
+    }
+
+    function resetWeights() {
+      customWeights = null;
+      updateWeightsState();
+      updateShareUrl();
+      evaluateSelectedPoint();
+    }
+
+    function customWeightsForRequest() {
+      return customWeights ? deepClone(customWeights) : null;
+    }
+
+    function encodeWeights(weights) {
+      const json = JSON.stringify(weights);
+      const bytes = new TextEncoder().encode(json);
+      let binary = "";
+      bytes.forEach((byte) => {
+        binary += String.fromCharCode(byte);
+      });
+      return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
+    }
+
+    function decodeWeights(raw) {
+      const padded = raw.replaceAll("-", "+").replaceAll("_", "/").padEnd(Math.ceil(raw.length / 4) * 4, "=");
+      const binary = atob(padded);
+      const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+      return JSON.parse(new TextDecoder().decode(bytes));
+    }
+
+    function formatWeight(value) {
+      return Number(value || 0).toLocaleString("ru-RU", { maximumFractionDigits: 2 });
+    }
+
+    function renderWeightNode(level, title, parentID, id, value) {
+      const labels = {
+        group: "Группа",
+        section: "Секция",
+        subsection: "Подгруппа",
+        indicator: "Показатель"
+      };
+      return `
+        <div class="weight-node level-${level}">
+          <label class="weight-label">
+            <span class="weight-kind level-${level}">${escapeHtml(labels[level] || "")}</span>
+            ${escapeHtml(title)}
+            <small>${escapeHtml(id)}</small>
+          </label>
+          <input data-weight-level="${escapeHtml(level)}" data-parent-id="${escapeHtml(parentID)}" data-weight-id="${escapeHtml(id)}" type="number" min="0" max="100" step="0.1" value="${escapeHtml(formatWeight(value).replace(",", "."))}" />
+        </div>
+      `;
+    }
+
+    function renderTotalRow(parentKey, title, level) {
+      return `<div class="weight-total-row total-${escapeHtml(level)}" data-total-parent="${escapeHtml(parentKey)}"><span>${escapeHtml(title)}</span><span>100%</span></div>`;
+    }
+
+    function renderWeightsTree() {
+      if (!assessmentConfig || !draftWeights) {
+        weightsTree.innerHTML = '<div class="empty">Конфигурация весов не загружена.</div>';
+        return;
+      }
+
+      const html = [];
+      html.push(renderTotalRow("groups", "Группы", "groups"));
+      assessmentConfig.groups.forEach((group) => {
+        html.push('<details class="weight-branch level-group">');
+        html.push("<summary>");
+        html.push(renderWeightNode("group", group.title, "groups", group.id, draftWeights.group_weights_percent[group.id]));
+        html.push("</summary>");
+        html.push(renderTotalRow(`section:${group.id}`, `Секции: ${group.title}`, "sections"));
+        group.sections.forEach((section) => {
+          html.push('<details class="weight-branch level-section">');
+          html.push("<summary>");
+          html.push(renderWeightNode("section", section.title, group.id, section.id, draftWeights.section_weights_percent[group.id]?.[section.id]));
+          html.push("</summary>");
+          html.push(renderTotalRow(`subsection:${section.id}`, `Подгруппы: ${section.title}`, "subsections"));
+          section.subsections.forEach((subsection) => {
+            html.push('<details class="weight-branch level-subsection">');
+            html.push("<summary>");
+            html.push(renderWeightNode("subsection", subsection.title, section.id, subsection.id, draftWeights.subsection_weights_percent[section.id]?.[subsection.id]));
+            html.push("</summary>");
+            html.push(renderTotalRow(`indicator:${subsection.id}`, `Показатели: ${subsection.title}`, "indicators"));
+            subsection.indicators.forEach((indicator) => {
+              html.push(renderWeightNode("indicator", indicator.title, subsection.id, indicator.id, draftWeights.indicator_weights_percent[subsection.id]?.[indicator.id]));
+            });
+            html.push("</details>");
+          });
+          html.push("</details>");
+        });
+        html.push("</details>");
+      });
+
+      weightsTree.innerHTML = html.join("");
+      weightsTree.querySelectorAll("input[data-weight-level]").forEach((input) => {
+        input.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+        input.addEventListener("input", () => {
+          setDraftWeight(input);
+          updateDraftValidation();
+        });
+      });
+      updateDraftValidation();
+    }
+
+    function setDraftWeight(input) {
+      const value = Number(input.value || 0);
+      const level = input.dataset.weightLevel;
+      const parentID = input.dataset.parentId;
+      const id = input.dataset.weightId;
+      if (level === "group") {
+        draftWeights.group_weights_percent[id] = value;
+      } else if (level === "section") {
+        draftWeights.section_weights_percent[parentID][id] = value;
+      } else if (level === "subsection") {
+        draftWeights.subsection_weights_percent[parentID][id] = value;
+      } else if (level === "indicator") {
+        draftWeights.indicator_weights_percent[parentID][id] = value;
+      }
+    }
+
+    function siblingGroups() {
+      if (!assessmentConfig) return [];
+      const groups = [{ key: "groups", title: "Группы", weights: draftWeights.group_weights_percent }];
+      assessmentConfig.groups.forEach((group) => {
+        groups.push({ key: `section:${group.id}`, title: `Секции: ${group.title}`, weights: draftWeights.section_weights_percent[group.id] });
+        group.sections.forEach((section) => {
+          groups.push({ key: `subsection:${section.id}`, title: `Подгруппы: ${section.title}`, weights: draftWeights.subsection_weights_percent[section.id] });
+          section.subsections.forEach((subsection) => {
+            groups.push({ key: `indicator:${subsection.id}`, title: `Показатели: ${subsection.title}`, weights: draftWeights.indicator_weights_percent[subsection.id] });
+          });
+        });
+      });
+      return groups;
+    }
+
+    function weightGroupIsValid(weights) {
+      const values = Object.values(weights || {});
+      const sum = values.reduce((total, value) => total + Number(value || 0), 0);
+      return values.every((value) => Number.isFinite(Number(value)) && Number(value) >= 0) && Math.abs(sum - 100) <= 0.001;
+    }
+
+    function weightsPayloadIsValid(weights) {
+      if (!weights || !assessmentConfig) return false;
+      draftWeights = deepClone(weights);
+      const valid = siblingGroups().every((group) => weightGroupIsValid(group.weights));
+      draftWeights = null;
+      return valid;
+    }
+
+    function updateDraftValidation() {
+      let invalidCount = 0;
+      siblingGroups().forEach((group) => {
+        const values = Object.values(group.weights || {});
+        const sum = values.reduce((total, value) => total + Number(value || 0), 0);
+        const valid = weightGroupIsValid(group.weights);
+        if (!valid) invalidCount += 1;
+        const row = weightsTree.querySelector(`[data-total-parent="${CSS.escape(group.key)}"]`);
+        if (row) {
+          row.classList.toggle("invalid", !valid);
+          const value = row.querySelector("span:last-child");
+          if (value) {
+            value.textContent = `${sum.toLocaleString("ru-RU", { maximumFractionDigits: 1 })}%`;
+          }
+        }
+      });
+      weightsTotal.textContent = invalidCount ? `Ошибок сумм: ${invalidCount}` : "Все суммы: 100%";
+      weightsTotal.classList.toggle("invalid", invalidCount > 0);
+      applyWeightsButton.disabled = invalidCount > 0;
+    }
+
+    function openWeightsModal() {
+      if (!assessmentConfig) {
+        setStatus("Конфигурация весов ещё не загружена.");
+        return;
+      }
+      draftWeights = activeWeights();
+      renderWeightsTree();
+      weightsModal.hidden = false;
+    }
+
+    function closeWeightsModal() {
+      weightsModal.hidden = true;
+      draftWeights = null;
+    }
+
+    function applyDraftWeights() {
+      if (!draftWeights) return;
+      updateDraftValidation();
+      if (applyWeightsButton.disabled) return;
+      const profile = profileWeights();
+      customWeights = JSON.stringify(draftWeights) === JSON.stringify(profile) ? null : deepClone(draftWeights);
+      closeWeightsModal();
+      updateWeightsState();
+      updateShareUrl();
+      setStatus(customWeights ? "Пользовательские веса применены." : "Веса профиля восстановлены.");
+      evaluateSelectedPoint();
+    }
+
+    function buildShareUrl() {
+      const url = new URL(window.location.href);
+      url.search = "";
+
+      if (selectedPoint) {
+        url.searchParams.set("lat", selectedPoint.lat.toFixed(6));
+        url.searchParams.set("lon", selectedPoint.lng.toFixed(6));
+      }
+      url.searchParams.set("profile", profileInput.value);
+      url.searchParams.set("radius", String(selectedRadius()));
+      if (customWeights) {
+        url.searchParams.set("weights", encodeWeights(customWeights));
+      }
+
+      return url;
+    }
+
+    function updateShareUrl() {
+      if (!selectedPoint) return;
+      window.history.replaceState(null, "", buildShareUrl());
+    }
+
+    async function copyShareUrl() {
+      if (!selectedPoint) return;
+
+      const shareUrl = buildShareUrl().toString();
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(shareUrl);
+        } else {
+          const input = document.createElement("input");
+          input.value = shareUrl;
+          input.setAttribute("readonly", "");
+          input.style.position = "fixed";
+          input.style.opacity = "0";
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand("copy");
+          input.remove();
+        }
+        setStatus("Ссылка скопирована.");
+      } catch (error) {
+        setStatus(`Не удалось скопировать ссылку: ${error.message}`);
+      }
+    }
+
+    function restoreStateFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const profile = params.get("profile");
+      const radius = params.get("radius");
+      const lat = Number(params.get("lat"));
+      const lon = Number(params.get("lon"));
+
+      if (profile && validSelectValue(profileInput, profile)) {
+        profileInput.value = profile;
+      }
+      if (radius && validSelectValue(radiusInput, radius)) {
+        radiusInput.value = radius;
+      }
+      customWeights = null;
+
+      const encodedWeights = params.get("weights");
+      if (encodedWeights) {
+        try {
+          const decoded = decodeWeights(encodedWeights);
+          if (weightsPayloadIsValid(decoded)) {
+            customWeights = decoded;
+          }
+        } catch {
+          customWeights = null;
+        }
+      }
+      updateWeightsState();
+
+      if (Number.isFinite(lat) && Number.isFinite(lon) && lat >= 55.097 && lat <= 56.066 && lon >= 36.722 && lon <= 38.048) {
+        setSelectedPoint(L.latLng(lat, lon), false);
+        map.setView(selectedPoint, Math.max(map.getZoom(), 13));
+        return true;
+      }
+
+      return false;
     }
 
     function scoreText(score) {
@@ -380,6 +1145,30 @@
     function totalScoreText(score) {
       if (score === null || score === undefined) return "нет";
       return String(Math.round(Number(score)));
+    }
+
+    function weightPercentText(weight) {
+      return `${(Number(weight || 0) * 100).toLocaleString("ru-RU", { maximumFractionDigits: 1 })}%`;
+    }
+
+    function contributionText(item, siblings) {
+      const value = contributionScore(item, siblings);
+      if (value === null) return "0";
+      return (value * 100).toLocaleString("ru-RU", { maximumFractionDigits: 1 });
+    }
+
+    function contributionScore(item, siblings) {
+      if (item.score === null || item.score === undefined || Number(item.weight || 0) <= 0) {
+        return 0;
+      }
+      const weightSum = siblings.reduce((sum, sibling) => {
+        if (sibling.score === null || sibling.score === undefined || Number(sibling.weight || 0) <= 0) {
+          return sum;
+        }
+        return sum + Number(sibling.weight || 0);
+      }, 0);
+      if (weightSum <= 0) return 0;
+      return Number(item.score || 0) * Number(item.weight || 0) / weightSum;
     }
 
     function scoreColor(score) {
@@ -442,11 +1231,20 @@
       }).addTo(boundaryLayer);
     }
 
+    async function loadAssessmentConfig() {
+      assessmentConfig = await fetchJson(`${API_BASE}/assessments/config`);
+      if (assessmentConfig?.default_profile_id && validSelectValue(profileInput, assessmentConfig.default_profile_id)) {
+        profileInput.value = assessmentConfig.default_profile_id;
+      }
+      editWeightsButton.disabled = false;
+      updateWeightsState();
+    }
+
     function renderSelection() {
       selectionLayer.clearLayers();
       if (!selectedPoint) return;
 
-      const radius = Number(radiusInput.value || 1000);
+      const radius = selectedRadius();
       L.circle(selectedPoint, {
         radius,
         color: "#1f6feb",
@@ -461,29 +1259,40 @@
     async function evaluateSelectedPoint() {
       if (!selectedPoint) return;
 
+      const requestId = ++evaluationRequestId;
       renderSelection();
       setStatus("Расчёт оценки...");
       usedObjectsLayer.clearLayers();
 
       try {
-        assessment = await fetchJson(`${API_BASE}/assessments/evaluate`, {
+        const requestBody = {
+          lat: selectedPoint.lat,
+          lon: selectedPoint.lng,
+          profile: profileInput.value,
+          radius_m: selectedRadius()
+        };
+        const weights = customWeightsForRequest();
+        if (weights) {
+          Object.assign(requestBody, weights);
+        }
+
+        const nextAssessment = await fetchJson(`${API_BASE}/assessments/evaluate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            lat: selectedPoint.lat,
-            lon: selectedPoint.lng,
-            profile: profileInput.value,
-            radius_m: Number(radiusInput.value || 1000)
-          })
+          body: JSON.stringify(requestBody)
         });
+        if (requestId !== evaluationRequestId) return;
 
+        assessment = nextAssessment;
         selectedGroupId = "";
         selectedSectionId = "";
+        selectedSubsectionId = "";
         highlightMunicipality();
         renderAssessment();
         renderUsedObjects();
         setStatus("Оценка рассчитана.");
       } catch (error) {
+        if (requestId !== evaluationRequestId) return;
         setStatus(`Ошибка расчёта: ${error.message}`);
       }
     }
@@ -517,12 +1326,18 @@
 
       const municipality = assessment.municipality?.name || "вне границ муниципалитетов";
       const score = Number(assessment.score || 0);
+      const isCustomAssessment = assessment.weights_mode === "custom";
+      const profileTitle = isCustomAssessment ? "Пользовательский профиль" : (assessment.profile_title || assessment.profile);
+      const baseProfile = isCustomAssessment
+        ? `<div>Основа: <strong>${escapeHtml(assessment.base_profile_title || profileInput.options[profileInput.selectedIndex]?.text || "")}</strong></div>`
+        : "";
 
       resultBox.innerHTML = `
         <div class="score-box">
           <div class="score" style="background:${scoreColor(score / 100)}">${totalScoreText(score)}</div>
           <div class="meta">
-            <div><strong>${escapeHtml(assessment.profile_title || assessment.profile)}</strong></div>
+            <div>Профиль: <strong>${escapeHtml(profileTitle)}</strong></div>
+            ${baseProfile}
             <div>Муниципалитет: <strong>${escapeHtml(municipality)}</strong></div>
             <div>Радиус: <strong>${Number(assessment.radius_m).toLocaleString("ru-RU")} м</strong></div>
             <div>Координаты: ${assessment.lat.toFixed(5)}, ${assessment.lon.toFixed(5)}</div>
@@ -536,6 +1351,19 @@
     function renderDrilldown() {
       const group = assessment.groups.find((item) => item.id === selectedGroupId);
       const section = group?.sections.find((item) => item.id === selectedSectionId);
+      const subsection = section?.subsections.find((item) => item.id === selectedSubsectionId);
+
+      if (subsection) {
+        return `
+          <div class="nav">
+            <button class="back" data-action="back-subsection">Назад</button>
+            <div class="crumb">${escapeHtml(group.title)} / ${escapeHtml(section.title)} / ${escapeHtml(subsection.title)}</div>
+          </div>
+          <div class="rows">
+            ${subsection.indicators.map((indicator) => renderIndicatorRow(indicator, subsection.indicators)).join("")}
+          </div>
+        `;
+      }
 
       if (section) {
         return `
@@ -544,7 +1372,7 @@
             <div class="crumb">${escapeHtml(group.title)} / ${escapeHtml(section.title)}</div>
           </div>
           <div class="rows">
-            ${section.indicators.map(renderIndicatorRow).join("")}
+            ${section.subsections.map((subsection) => renderSubsectionRow(subsection, section.subsections)).join("")}
           </div>
         `;
       }
@@ -556,19 +1384,19 @@
             <div class="crumb">${escapeHtml(group.title)}</div>
           </div>
           <div class="rows">
-            ${group.sections.map(renderSectionRow).join("")}
+            ${group.sections.map((section) => renderSectionRow(section, group.sections)).join("")}
           </div>
         `;
       }
 
       return `
         <div class="rows">
-          ${assessment.groups.map(renderGroupRow).join("")}
+          ${assessment.groups.map((group) => renderGroupRow(group, assessment.groups)).join("")}
         </div>
       `;
     }
 
-    function renderGroupRow(group) {
+    function renderGroupRow(group, siblings) {
       return `
         <button class="row" data-group-id="${escapeHtml(group.id)}">
           <div class="row-top">
@@ -576,12 +1404,16 @@
             <div class="row-score">${scoreText(group.score)}</div>
           </div>
           <div class="bar"><div class="bar-fill" style="width:${scorePercent(group.score)}%;background:${scoreColor(group.score)}"></div></div>
-          <div class="details">Вес группы: ${group.weight.toLocaleString("ru-RU", { maximumFractionDigits: 3 })}</div>
+          <div class="details">
+            <div>Оценка группы: ${scoreText(group.score)}</div>
+            <div>Вклад в итог: ${contributionText(group, siblings)} из 100</div>
+            <div>Вес группы: ${weightPercentText(group.weight)}</div>
+          </div>
         </button>
       `;
     }
 
-    function renderSectionRow(section) {
+    function renderSectionRow(section, siblings) {
       return `
         <button class="row" data-section-id="${escapeHtml(section.id)}">
           <div class="row-top">
@@ -589,12 +1421,33 @@
             <div class="row-score">${scoreText(section.score)}</div>
           </div>
           <div class="bar"><div class="bar-fill" style="width:${scorePercent(section.score)}%;background:${scoreColor(section.score)}"></div></div>
-          <div class="details">Вес секции: ${section.weight.toLocaleString("ru-RU", { maximumFractionDigits: 3 })}</div>
+          <div class="details">
+            <div>Оценка секции: ${scoreText(section.score)}</div>
+            <div>Вклад в группу: ${contributionText(section, siblings)} из 100</div>
+            <div>Вес секции: ${weightPercentText(section.weight)}</div>
+          </div>
         </button>
       `;
     }
 
-    function renderIndicatorRow(indicator) {
+    function renderSubsectionRow(subsection, siblings) {
+      return `
+        <button class="row" data-subsection-id="${escapeHtml(subsection.id)}">
+          <div class="row-top">
+            <div class="row-title">${escapeHtml(subsection.title)}</div>
+            <div class="row-score">${scoreText(subsection.score)}</div>
+          </div>
+          <div class="bar"><div class="bar-fill" style="width:${scorePercent(subsection.score)}%;background:${scoreColor(subsection.score)}"></div></div>
+          <div class="details">
+            <div>Оценка подгруппы: ${scoreText(subsection.score)}</div>
+            <div>Вклад в секцию: ${contributionText(subsection, siblings)} из 100</div>
+            <div>Вес подгруппы: ${weightPercentText(subsection.weight)}</div>
+          </div>
+        </button>
+      `;
+    }
+
+    function renderIndicatorRow(indicator, siblings) {
       const fullIndicator = indicatorWithMapFeatures(indicator);
       const object = fullIndicator.nearest_object;
       const objectText = object ? `<div>Объект: ${escapeHtml(object.name)}</div>` : "";
@@ -610,7 +1463,9 @@
           <div class="bar"><div class="bar-fill" style="width:${scorePercent(indicator.score)}%;background:${scoreColor(indicator.score)}"></div></div>
           <div class="details">
             <div>Значение: ${escapeHtml(formatRaw(indicator))}</div>
-            <div>Вес показателя: ${indicator.weight.toLocaleString("ru-RU", { maximumFractionDigits: 3 })}</div>
+            <div>Оценка показателя: ${scoreText(indicator.score)}</div>
+            <div>Вклад в подгруппу: ${contributionText(indicator, siblings)} из 100</div>
+            <div>Вес показателя: ${weightPercentText(indicator.weight)}</div>
             ${objectText}
             ${featureText}
             ${status}
@@ -624,6 +1479,7 @@
         el.addEventListener("click", () => {
           selectedGroupId = el.dataset.groupId;
           selectedSectionId = "";
+          selectedSubsectionId = "";
           renderAssessment();
           renderUsedObjects();
         });
@@ -632,6 +1488,15 @@
       resultBox.querySelectorAll("[data-section-id]").forEach((el) => {
         el.addEventListener("click", () => {
           selectedSectionId = el.dataset.sectionId;
+          selectedSubsectionId = "";
+          renderAssessment();
+          renderUsedObjects();
+        });
+      });
+
+      resultBox.querySelectorAll("[data-subsection-id]").forEach((el) => {
+        el.addEventListener("click", () => {
+          selectedSubsectionId = el.dataset.subsectionId;
           renderAssessment();
           renderUsedObjects();
         });
@@ -647,6 +1512,16 @@
       if (backSection) {
         backSection.addEventListener("click", () => {
           selectedSectionId = "";
+          selectedSubsectionId = "";
+          renderAssessment();
+          renderUsedObjects();
+        });
+      }
+
+      const backSubsection = resultBox.querySelector('[data-action="back-subsection"]');
+      if (backSubsection) {
+        backSubsection.addEventListener("click", () => {
+          selectedSubsectionId = "";
           renderAssessment();
           renderUsedObjects();
         });
@@ -657,6 +1532,7 @@
         backGroup.addEventListener("click", () => {
           selectedGroupId = "";
           selectedSectionId = "";
+          selectedSubsectionId = "";
           renderAssessment();
           renderUsedObjects();
         });
@@ -668,8 +1544,18 @@
       if (indicatorId) {
         return assessment.indicators.filter((indicator) => indicator.id === indicatorId);
       }
+      if (selectedSubsectionId) {
+        return assessment.indicators.filter((indicator) =>
+          indicator.group_id === selectedGroupId &&
+          indicator.section_id === selectedSectionId &&
+          indicator.subsection_id === selectedSubsectionId
+        );
+      }
       if (selectedSectionId) {
-        return assessment.indicators.filter((indicator) => indicator.section_id === selectedSectionId);
+        return assessment.indicators.filter((indicator) =>
+          indicator.group_id === selectedGroupId &&
+          indicator.section_id === selectedSectionId
+        );
       }
       if (selectedGroupId) {
         return assessment.indicators.filter((indicator) => indicator.group_id === selectedGroupId);
@@ -782,16 +1668,48 @@
     }
 
     map.on("click", (event) => {
-      selectedPoint = event.latlng;
+      setSelectedPoint(event.latlng);
       evaluateSelectedPoint();
     });
 
-    profileInput.addEventListener("change", evaluateSelectedPoint);
-    radiusInput.addEventListener("change", evaluateSelectedPoint);
+    profileInput.addEventListener("change", () => {
+      customWeights = null;
+      updateWeightsState();
+      updateShareUrl();
+      evaluateSelectedPoint();
+    });
+    radiusInput.addEventListener("change", () => {
+      updateShareUrl();
+      evaluateSelectedPoint();
+    });
+    shareButton.addEventListener("click", copyShareUrl);
+    editWeightsButton.addEventListener("click", openWeightsModal);
+    resetWeightsButton.addEventListener("click", resetWeights);
+    closeWeightsButton.addEventListener("click", closeWeightsModal);
+    cancelWeightsButton.addEventListener("click", closeWeightsModal);
+    resetDraftWeightsButton.addEventListener("click", () => {
+      draftWeights = profileWeights();
+      renderWeightsTree();
+    });
+    applyWeightsButton.addEventListener("click", applyDraftWeights);
+    weightsModal.addEventListener("click", (event) => {
+      if (event.target === weightsModal) {
+        closeWeightsModal();
+      }
+    });
 
-    loadBoundaries()
-      .then(() => setStatus("Выберите точку на карте."))
-      .catch((error) => setStatus(`Границы не загружены: ${error.message}`));
+    updateWeightsState();
+
+    Promise.all([loadAssessmentConfig(), loadBoundaries()])
+      .then(() => {
+        if (restoreStateFromUrl()) {
+          renderSelection();
+          evaluateSelectedPoint();
+        } else {
+          setStatus("Выберите точку на карте.");
+        }
+      })
+      .catch((error) => setStatus(`Данные не загружены: ${error.message}`));
   </script>
 </body>
 </html>

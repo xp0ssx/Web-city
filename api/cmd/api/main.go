@@ -78,6 +78,7 @@ func main() {
 	})
 
 	r.Route("/api/v1/assessments", func(r chi.Router) {
+		r.Get("/config", assessmentHandler.Config)
 		r.Post("/evaluate", assessmentHandler.Evaluate)
 	})
 

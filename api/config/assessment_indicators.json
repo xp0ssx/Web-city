@@ -16,7 +16,9 @@
       "unit": "m",
       "best": 300,
       "worst": 1200,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "ground_public_transport",
+      "subsection_title": "Наземный общественный транспорт"
     },
     {
       "id": "ground_transport_stop_count",
@@ -34,7 +36,9 @@
       "unit": "count",
       "best": 5,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "ground_public_transport",
+      "subsection_title": "Наземный общественный транспорт"
     },
     {
       "id": "rail_transit_nearest_station_distance",
@@ -53,7 +57,9 @@
       "unit": "m",
       "best": 500,
       "worst": 2500,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "rail_transit",
+      "subsection_title": "Метрополитен, МЦК и МЦД"
     },
     {
       "id": "rail_transit_station_count",
@@ -72,7 +78,9 @@
       "unit": "count",
       "best": 4,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "rail_transit",
+      "subsection_title": "Метрополитен, МЦК и МЦД"
     },
     {
       "id": "nearest_fuel_station_distance",
@@ -90,7 +98,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "vehicle_support_infrastructure",
+      "subsection_title": "Поддерживающая инфраструктура"
     },
     {
       "id": "nearest_ev_charging_station_distance",
@@ -108,7 +118,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "vehicle_support_infrastructure",
+      "subsection_title": "Поддерживающая инфраструктура"
     },
     {
       "id": "nearest_parking_distance",
@@ -128,7 +140,9 @@
       "unit": "m",
       "best": 300,
       "worst": 1500,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "parking_infrastructure",
+      "subsection_title": "Парковочная инфраструктура"
     },
     {
       "id": "parking_count",
@@ -148,7 +162,9 @@
       "unit": "count",
       "best": 3,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "parking_infrastructure",
+      "subsection_title": "Парковочная инфраструктура"
     },
     {
       "id": "nearest_general_education_distance",
@@ -166,7 +182,9 @@
       "unit": "m",
       "best": 500,
       "worst": 2000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "general_education",
+      "subsection_title": "Общеобразовательные учреждения"
     },
     {
       "id": "nearest_children_hospital_distance",
@@ -184,7 +202,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "children_medical_facilities",
+      "subsection_title": "Медицинские учреждения для детей"
     },
     {
       "id": "nearest_children_clinic_distance",
@@ -202,7 +222,9 @@
       "unit": "m",
       "best": 700,
       "worst": 3000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "children_medical_facilities",
+      "subsection_title": "Медицинские учреждения для детей"
     },
     {
       "id": "nearest_children_dental_clinic_distance",
@@ -220,7 +242,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "children_medical_facilities",
+      "subsection_title": "Медицинские учреждения для детей"
     },
     {
       "id": "nearest_additional_education_distance",
@@ -238,7 +262,9 @@
       "unit": "m",
       "best": 700,
       "worst": 3000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "children_leisure_additional_education",
+      "subsection_title": "Детская инфраструктура досуга и дополнительного образования"
     },
     {
       "id": "nearest_cultural_center_distance",
@@ -256,7 +282,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "children_leisure_additional_education",
+      "subsection_title": "Детская инфраструктура досуга и дополнительного образования"
     },
     {
       "id": "nearest_mfc_distance",
@@ -274,7 +302,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "mfc",
+      "subsection_title": "МФЦ"
     },
     {
       "id": "nearest_local_authority_distance",
@@ -292,7 +322,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "local_authorities",
+      "subsection_title": "Управы районов"
     },
     {
       "id": "nearest_adult_clinic_distance",
@@ -310,7 +342,9 @@
       "unit": "m",
       "best": 700,
       "worst": 3000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "adult_clinics",
+      "subsection_title": "Поликлиники"
     },
     {
       "id": "nearest_adult_dental_clinic_distance",
@@ -328,7 +362,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "adult_dental_clinics",
+      "subsection_title": "Стоматологии"
     },
     {
       "id": "nearest_adult_hospital_distance",
@@ -346,7 +382,9 @@
       "unit": "m",
       "best": 1500,
       "worst": 7000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "adult_hospitals",
+      "subsection_title": "Больницы"
     },
     {
       "id": "nearest_trauma_center_distance",
@@ -364,7 +402,9 @@
       "unit": "m",
       "best": 1500,
       "worst": 7000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "emergency_medical_care",
+      "subsection_title": "Экстренная медицинская помощь"
     },
     {
       "id": "nearest_emergency_medical_care_distance",
@@ -382,7 +422,9 @@
       "unit": "m",
       "best": 1500,
       "worst": 7000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "emergency_medical_care",
+      "subsection_title": "Экстренная медицинская помощь"
     },
     {
       "id": "nearest_grocery_store_distance",
@@ -408,7 +450,9 @@
       "unit": "m",
       "best": 300,
       "worst": 1200,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "grocery_stores",
+      "subsection_title": "Продуктовые магазины"
     },
     {
       "id": "grocery_store_count",
@@ -434,7 +478,9 @@
       "unit": "count",
       "best": 5,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "grocery_stores",
+      "subsection_title": "Продуктовые магазины"
     },
     {
       "id": "nearest_pharmacy_distance",
@@ -452,7 +498,9 @@
       "unit": "m",
       "best": 500,
       "worst": 1500,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "pharmacies",
+      "subsection_title": "Аптеки"
     },
     {
       "id": "pharmacy_count",
@@ -470,7 +518,119 @@
       "unit": "count",
       "best": 3,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "pharmacies",
+      "subsection_title": "Аптеки"
+    },
+    {
+      "id": "nearest_hairdresser_distance",
+      "title": "Расстояние до ближайшей парикмахерской",
+      "group_id": "commercial_household",
+      "group_title": "Коммерческая и бытовая инфраструктура",
+      "section_id": "household_infrastructure_accessibility",
+      "section_title": "Доступность бытовой инфраструктуры",
+      "method": "nearest_distance",
+      "category": "commercial_household",
+      "subcategory": "hairdressers",
+      "object_types": [
+        "hairdresser"
+      ],
+      "unit": "m",
+      "best": 500,
+      "worst": 1500,
+      "direction": "lower_is_better",
+      "subsection_id": "hairdressers",
+      "subsection_title": "Парикмахерские"
+    },
+    {
+      "id": "hairdresser_count",
+      "title": "Количество парикмахерских в окрестностях",
+      "group_id": "commercial_household",
+      "group_title": "Коммерческая и бытовая инфраструктура",
+      "section_id": "household_infrastructure_accessibility",
+      "section_title": "Доступность бытовой инфраструктуры",
+      "method": "count_in_radius",
+      "category": "commercial_household",
+      "subcategory": "hairdressers",
+      "object_types": [
+        "hairdresser"
+      ],
+      "unit": "count",
+      "best": 3,
+      "worst": 0,
+      "direction": "higher_is_better",
+      "subsection_id": "hairdressers",
+      "subsection_title": "Парикмахерские"
+    },
+    {
+      "id": "nearest_beauty_salon_distance",
+      "title": "Расстояние до ближайшего салона красоты",
+      "group_id": "commercial_household",
+      "group_title": "Коммерческая и бытовая инфраструктура",
+      "section_id": "household_infrastructure_accessibility",
+      "section_title": "Доступность бытовой инфраструктуры",
+      "method": "nearest_distance",
+      "category": "commercial_household",
+      "subcategory": "beauty_salons",
+      "object_types": [
+        "beauty_salon"
+      ],
+      "unit": "m",
+      "best": 500,
+      "worst": 1500,
+      "direction": "lower_is_better",
+      "subsection_id": "beauty_salons",
+      "subsection_title": "Салоны красоты"
+    },
+    {
+      "id": "beauty_salon_count",
+      "title": "Количество салонов красоты в окрестностях",
+      "group_id": "commercial_household",
+      "group_title": "Коммерческая и бытовая инфраструктура",
+      "section_id": "household_infrastructure_accessibility",
+      "section_title": "Доступность бытовой инфраструктуры",
+      "method": "count_in_radius",
+      "category": "commercial_household",
+      "subcategory": "beauty_salons",
+      "object_types": [
+        "beauty_salon"
+      ],
+      "unit": "count",
+      "best": 3,
+      "worst": 0,
+      "direction": "higher_is_better",
+      "subsection_id": "beauty_salons",
+      "subsection_title": "Салоны красоты"
+    },
+    {
+      "id": "repair_service_count",
+      "title": "Общее количество ремонтных и сервисных объектов",
+      "group_id": "commercial_household",
+      "group_title": "Коммерческая и бытовая инфраструктура",
+      "section_id": "household_infrastructure_accessibility",
+      "section_title": "Доступность бытовой инфраструктуры",
+      "method": "count_in_radius",
+      "category": "commercial_household",
+      "subcategory": "repair_service",
+      "object_types": [
+        "dry_cleaning",
+        "laundry",
+        "shoe_repair",
+        "tailor_shop",
+        "tailor_craft",
+        "shoemaker",
+        "electronics_repair",
+        "key_cutter",
+        "dressmaker",
+        "watchmaker",
+        "post_office"
+      ],
+      "unit": "count",
+      "best": 5,
+      "worst": 0,
+      "direction": "higher_is_better",
+      "subsection_id": "repair_service",
+      "subsection_title": "Ремонтные и сервисные услуги"
     },
     {
       "id": "repair_service_type_count",
@@ -498,7 +658,9 @@
       "unit": "count",
       "best": 4,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "repair_service",
+      "subsection_title": "Ремонтные и сервисные услуги"
     },
     {
       "id": "nearest_market_distance",
@@ -516,7 +678,29 @@
       "unit": "m",
       "best": 700,
       "worst": 3000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "markets",
+      "subsection_title": "Рынки"
+    },
+    {
+      "id": "market_count",
+      "title": "Количество рынков в окрестностях",
+      "group_id": "commercial_household",
+      "group_title": "Коммерческая и бытовая инфраструктура",
+      "section_id": "household_infrastructure_accessibility",
+      "section_title": "Доступность бытовой инфраструктуры",
+      "method": "count_in_radius",
+      "category": "commercial_household",
+      "subcategory": "markets",
+      "object_types": [
+        "marketplace"
+      ],
+      "unit": "count",
+      "best": 1,
+      "worst": 0,
+      "direction": "higher_is_better",
+      "subsection_id": "markets",
+      "subsection_title": "Рынки"
     },
     {
       "id": "nearest_industrial_enterprise_distance",
@@ -534,7 +718,9 @@
       "unit": "m",
       "best": 2000,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "industrial_enterprises",
+      "subsection_title": "Промышленные предприятия"
     },
     {
       "id": "industrial_enterprise_count",
@@ -552,7 +738,49 @@
       "unit": "count",
       "best": 0,
       "worst": 5,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "industrial_enterprises",
+      "subsection_title": "Промышленные предприятия"
+    },
+    {
+      "id": "nearest_industrial_complex_distance",
+      "title": "Расстояние до ближайшего промышленного комплекса",
+      "group_id": "recreation_environment",
+      "group_title": "Рекреация и экологическая комфортность",
+      "section_id": "environmental_conditions",
+      "section_title": "Экологическая обстановка",
+      "method": "nearest_distance",
+      "category": "recreation_environment",
+      "subcategory": "industrial_pollution",
+      "object_types": [
+        "industrial_complex"
+      ],
+      "unit": "m",
+      "best": 2000,
+      "worst": 0,
+      "direction": "higher_is_better",
+      "subsection_id": "industrial_complexes",
+      "subsection_title": "Промышленные комплексы"
+    },
+    {
+      "id": "industrial_complex_count",
+      "title": "Количество промышленных комплексов в области",
+      "group_id": "recreation_environment",
+      "group_title": "Рекреация и экологическая комфортность",
+      "section_id": "environmental_conditions",
+      "section_title": "Экологическая обстановка",
+      "method": "count_in_radius",
+      "category": "recreation_environment",
+      "subcategory": "industrial_pollution",
+      "object_types": [
+        "industrial_complex"
+      ],
+      "unit": "count",
+      "best": 0,
+      "worst": 3,
+      "direction": "lower_is_better",
+      "subsection_id": "industrial_complexes",
+      "subsection_title": "Промышленные комплексы"
     },
     {
       "id": "nearest_waste_site_distance",
@@ -570,7 +798,29 @@
       "unit": "m",
       "best": 1000,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "waste_accumulation_sites",
+      "subsection_title": "Места накопления отходов"
+    },
+    {
+      "id": "waste_site_count",
+      "title": "Количество мест накопления отходов в области",
+      "group_id": "recreation_environment",
+      "group_title": "Рекреация и экологическая комфортность",
+      "section_id": "environmental_conditions",
+      "section_title": "Экологическая обстановка",
+      "method": "count_in_radius",
+      "category": "recreation_environment",
+      "subcategory": "waste_accumulation_sites",
+      "object_types": [
+        "garbage_yard"
+      ],
+      "unit": "count",
+      "best": 0,
+      "worst": 10,
+      "direction": "lower_is_better",
+      "subsection_id": "waste_accumulation_sites",
+      "subsection_title": "Места накопления отходов"
     },
     {
       "id": "water_area_m2",
@@ -589,7 +839,9 @@
       "unit": "m2",
       "best": 50000,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "water_bodies",
+      "subsection_title": "Водные объекты"
     },
     {
       "id": "natural_greenery_area_m2",
@@ -609,7 +861,9 @@
       "unit": "m2",
       "best": 100000,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "parks_natural_greenery",
+      "subsection_title": "Парки и природные насаждения"
     },
     {
       "id": "park_area_m2",
@@ -627,7 +881,9 @@
       "unit": "m2",
       "best": 100000,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "parks_natural_greenery",
+      "subsection_title": "Парки и природные насаждения"
     },
     {
       "id": "cultural_heritage_area_m2",
@@ -645,7 +901,33 @@
       "unit": "m2",
       "best": 10000,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "cultural_environment",
+      "subsection_title": "Культурная среда"
+    },
+    {
+      "id": "culture_object_count",
+      "title": "Количество учреждений культуры в области",
+      "group_id": "recreation_environment",
+      "group_title": "Рекреация и экологическая комфортность",
+      "section_id": "cultural_leisure_infrastructure",
+      "section_title": "Культурно-досуговая инфраструктура",
+      "method": "count_in_radius",
+      "category": "recreation_environment",
+      "subcategory": "cultural_environment",
+      "object_types": [
+        "theater",
+        "museum",
+        "tourist_information_center",
+        "library",
+        "arts_centre"
+      ],
+      "unit": "count",
+      "best": 5,
+      "worst": 0,
+      "direction": "higher_is_better",
+      "subsection_id": "cultural_environment",
+      "subsection_title": "Культурная среда"
     },
     {
       "id": "culture_object_type_count",
@@ -667,7 +949,34 @@
       "unit": "count",
       "best": 3,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "cultural_environment",
+      "subsection_title": "Культурная среда"
+    },
+    {
+      "id": "catering_leisure_count",
+      "title": "Количество объектов питания и досуга",
+      "group_id": "recreation_environment",
+      "group_title": "Рекреация и экологическая комфортность",
+      "section_id": "cultural_leisure_infrastructure",
+      "section_title": "Культурно-досуговая инфраструктура",
+      "method": "count_in_radius",
+      "category": "recreation_environment",
+      "subcategory": "catering_leisure",
+      "object_types": [
+        "cafe",
+        "restaurant",
+        "fast_food",
+        "bar",
+        "pub",
+        "cinema"
+      ],
+      "unit": "count",
+      "best": 10,
+      "worst": 0,
+      "direction": "higher_is_better",
+      "subsection_id": "catering_leisure",
+      "subsection_title": "Заведения общественного питания и досуга"
     },
     {
       "id": "catering_leisure_type_count",
@@ -690,7 +999,34 @@
       "unit": "count",
       "best": 4,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "catering_leisure",
+      "subsection_title": "Заведения общественного питания и досуга"
+    },
+    {
+      "id": "sports_infrastructure_count",
+      "title": "Количество объектов спортивной инфраструктуры",
+      "group_id": "recreation_environment",
+      "group_title": "Рекреация и экологическая комфортность",
+      "section_id": "cultural_leisure_infrastructure",
+      "section_title": "Культурно-досуговая инфраструктура",
+      "method": "count_in_radius",
+      "category": "recreation_environment",
+      "subcategory": "sports_infrastructure",
+      "object_types": [
+        "sports_centre",
+        "fitness_centre",
+        "stadium",
+        "swimming_pool",
+        "pitch",
+        "track"
+      ],
+      "unit": "count",
+      "best": 5,
+      "worst": 0,
+      "direction": "higher_is_better",
+      "subsection_id": "sports_infrastructure",
+      "subsection_title": "Спортивная инфраструктура"
     },
     {
       "id": "sports_infrastructure_type_count",
@@ -713,7 +1049,9 @@
       "unit": "count",
       "best": 3,
       "worst": 0,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "sports_infrastructure",
+      "subsection_title": "Спортивная инфраструктура"
     },
     {
       "id": "nearest_children_leisure_place_distance",
@@ -731,7 +1069,29 @@
       "unit": "m",
       "best": 700,
       "worst": 3000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "children_leisure",
+      "subsection_title": "Детский досуг"
+    },
+    {
+      "id": "children_leisure_place_count",
+      "title": "Количество объектов детского досуга в области",
+      "group_id": "recreation_environment",
+      "group_title": "Рекреация и экологическая комфортность",
+      "section_id": "cultural_leisure_infrastructure",
+      "section_title": "Культурно-досуговая инфраструктура",
+      "method": "count_in_radius",
+      "category": "recreation_environment",
+      "subcategory": "children_leisure",
+      "object_types": [
+        "children_leisure_place"
+      ],
+      "unit": "count",
+      "best": 3,
+      "worst": 0,
+      "direction": "higher_is_better",
+      "subsection_id": "children_leisure",
+      "subsection_title": "Детский досуг"
     },
     {
       "id": "nearest_fire_station_distance",
@@ -749,7 +1109,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "fire_stations",
+      "subsection_title": "Пожарные отделения"
     },
     {
       "id": "nearest_police_distance",
@@ -767,7 +1129,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "police_stations",
+      "subsection_title": "Отделения полиции"
     },
     {
       "id": "nearest_volunteer_guard_distance",
@@ -785,7 +1149,9 @@
       "unit": "m",
       "best": 1000,
       "worst": 5000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "volunteer_guard_headquarters",
+      "subsection_title": "Штабы народной дружины"
     },
     {
       "id": "district_price_rub_m2",
@@ -799,7 +1165,9 @@
       "unit": "rub_m2",
       "best": 200000,
       "worst": 600000,
-      "direction": "lower_is_better"
+      "direction": "lower_is_better",
+      "subsection_id": "housing_price",
+      "subsection_title": "Стоимость жилья"
     },
     {
       "id": "district_yield_vs_bank_deposit",
@@ -813,7 +1181,9 @@
       "unit": "ratio",
       "best": 1.4,
       "worst": 0.1,
-      "direction": "higher_is_better"
+      "direction": "higher_is_better",
+      "subsection_id": "rental_yield",
+      "subsection_title": "Доходность аренды"
     }
   ]
 }
