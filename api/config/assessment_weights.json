@@ -1,85 +1,63 @@
 {
   "default_profile_id": "families_with_children",
   "default_indicator_weights": {
-    "ground_public_transport": {
-      "ground_transport_nearest_stop_distance": 0.60,
-      "ground_transport_stop_count": 0.40
+    "public_transport_accessibility": {
+      "ground_transport_nearest_stop_distance": 0.30,
+      "ground_transport_stop_count": 0.20,
+      "rail_transit_nearest_station_distance": 0.35,
+      "rail_transit_station_count": 0.15
     },
-    "rail_transit": {
-      "rail_transit_nearest_station_distance": 0.70,
-      "rail_transit_station_count": 0.30
+    "personal_vehicle_accessibility": {
+      "nearest_fuel_station_distance": 0.25,
+      "nearest_ev_charging_station_distance": 0.25,
+      "nearest_parking_distance": 0.30,
+      "parking_count": 0.20
     },
-    "vehicle_support_infrastructure": {
-      "nearest_fuel_station_distance": 0.50,
-      "nearest_ev_charging_station_distance": 0.50
+    "child_social_infrastructure": {
+      "nearest_general_education_distance": 0.333,
+      "nearest_children_hospital_distance": 0.100,
+      "nearest_children_clinic_distance": 0.167,
+      "nearest_children_dental_clinic_distance": 0.067,
+      "nearest_additional_education_distance": 0.200,
+      "nearest_cultural_center_distance": 0.133
     },
-    "parking_infrastructure": {
-      "nearest_parking_distance": 0.60,
-      "parking_count": 0.40
-    },
-    "general_education": {
-      "nearest_general_education_distance": 1.00
-    },
-    "children_medical_facilities": {
-      "nearest_children_hospital_distance": 0.30,
-      "nearest_children_clinic_distance": 0.50,
-      "nearest_children_dental_clinic_distance": 0.20
-    },
-    "children_leisure_additional_education": {
-      "nearest_additional_education_distance": 0.60,
-      "nearest_cultural_center_distance": 0.40
-    },
-    "government_facilities": {
+    "government_institutions_accessibility": {
       "nearest_mfc_distance": 0.60,
       "nearest_local_authority_distance": 0.40
     },
-    "adult_medical_facilities": {
+    "adult_medical_facilities_accessibility": {
       "nearest_adult_clinic_distance": 0.30,
       "nearest_adult_dental_clinic_distance": 0.15,
       "nearest_adult_hospital_distance": 0.20,
       "nearest_trauma_center_distance": 0.20,
       "nearest_emergency_medical_care_distance": 0.15
     },
-    "grocery_stores": {
-      "nearest_grocery_store_distance": 0.60,
-      "grocery_store_count": 0.40
+    "essential_stores": {
+      "nearest_grocery_store_distance": 0.30,
+      "grocery_store_count": 0.20,
+      "nearest_pharmacy_distance": 0.30,
+      "pharmacy_count": 0.20
     },
-    "pharmacies": {
-      "nearest_pharmacy_distance": 0.60,
-      "pharmacy_count": 0.40
+    "household_infrastructure_accessibility": {
+      "repair_service_type_count": 0.50,
+      "nearest_market_distance": 0.50
     },
-    "repair_service": {
-      "repair_service_type_count": 1.00
+    "environmental_conditions": {
+      "nearest_industrial_enterprise_distance": 0.25,
+      "industrial_enterprise_count": 0.25,
+      "nearest_waste_site_distance": 0.50
     },
-    "markets": {
-      "nearest_market_distance": 1.00
+    "natural_recreation_potential": {
+      "water_area_m2": 0.50,
+      "natural_greenery_area_m2": 0.25,
+      "park_area_m2": 0.25
     },
-    "industrial_pollution": {
-      "nearest_industrial_enterprise_distance": 0.50,
-      "industrial_enterprise_count": 0.50
-    },
-    "waste_accumulation_sites": {
-      "nearest_waste_site_distance": 1.00
-    },
-    "water_bodies": {
-      "water_area_m2": 1.00
-    },
-    "parks_greenery": {
-      "natural_greenery_area_m2": 0.50,
-      "park_area_m2": 0.50
-    },
-    "cultural_environment": {
-      "cultural_heritage_area_m2": 0.50,
-      "culture_object_type_count": 0.50
-    },
-    "catering_leisure": {
-      "catering_leisure_type_count": 1.00
-    },
-    "sports_infrastructure": {
-      "sports_infrastructure_type_count": 1.00
-    },
-    "children_leisure": {
-      "nearest_children_leisure_place_distance": 1.00
+    "cultural_leisure_infrastructure": {
+      "cultural_heritage_area_m2": 0.125,
+      "culture_object_type_count": 0.125,
+      "catering_leisure_type_count": 0.250,
+      "sports_infrastructure_type_count": 0.250,
+      "nearest_children_leisure_place_distance": 0.250
     },
     "emergency_services": {
       "nearest_fire_station_distance": 0.35,
@@ -104,33 +82,22 @@
       },
       "section_weights": {
         "transport_accessibility": {
-          "ground_public_transport": 0.300,
-          "rail_transit": 0.275,
-          "vehicle_support_infrastructure": 0.175,
-          "parking_infrastructure": 0.250
+          "public_transport_accessibility": 0.575,
+          "personal_vehicle_accessibility": 0.425
         },
         "social_infrastructure": {
-          "general_education": 0.267,
-          "children_medical_facilities": 0.250,
-          "children_leisure_additional_education": 0.217,
-          "government_facilities": 0.133,
-          "adult_medical_facilities": 0.133
+          "child_social_infrastructure": 0.734,
+          "government_institutions_accessibility": 0.133,
+          "adult_medical_facilities_accessibility": 0.133
         },
         "commercial_household": {
-          "grocery_stores": 0.361,
-          "pharmacies": 0.278,
-          "repair_service": 0.194,
-          "markets": 0.167
+          "essential_stores": 0.639,
+          "household_infrastructure_accessibility": 0.361
         },
         "recreation_environment": {
-          "industrial_pollution": 0.145,
-          "waste_accumulation_sites": 0.145,
-          "water_bodies": 0.108,
-          "parks_greenery": 0.169,
-          "cultural_environment": 0.108,
-          "catering_leisure": 0.072,
-          "sports_infrastructure": 0.096,
-          "children_leisure": 0.157
+          "environmental_conditions": 0.290,
+          "natural_recreation_potential": 0.277,
+          "cultural_leisure_infrastructure": 0.433
         },
         "safety_economic_stability": {
           "emergency_services": 0.650,
@@ -150,33 +117,22 @@
       },
       "section_weights": {
         "transport_accessibility": {
-          "ground_public_transport": 0.317,
-          "rail_transit": 0.366,
-          "vehicle_support_infrastructure": 0.146,
-          "parking_infrastructure": 0.171
+          "public_transport_accessibility": 0.683,
+          "personal_vehicle_accessibility": 0.317
         },
         "social_infrastructure": {
-          "general_education": 0.121,
-          "children_medical_facilities": 0.091,
-          "children_leisure_additional_education": 0.242,
-          "government_facilities": 0.242,
-          "adult_medical_facilities": 0.304
+          "child_social_infrastructure": 0.454,
+          "government_institutions_accessibility": 0.242,
+          "adult_medical_facilities_accessibility": 0.304
         },
         "commercial_household": {
-          "grocery_stores": 0.306,
-          "pharmacies": 0.222,
-          "repair_service": 0.278,
-          "markets": 0.194
+          "essential_stores": 0.528,
+          "household_infrastructure_accessibility": 0.472
         },
         "recreation_environment": {
-          "industrial_pollution": 0.099,
-          "waste_accumulation_sites": 0.099,
-          "water_bodies": 0.086,
-          "parks_greenery": 0.123,
-          "cultural_environment": 0.173,
-          "catering_leisure": 0.198,
-          "sports_infrastructure": 0.160,
-          "children_leisure": 0.062
+          "environmental_conditions": 0.198,
+          "natural_recreation_potential": 0.209,
+          "cultural_leisure_infrastructure": 0.593
         },
         "safety_economic_stability": {
           "emergency_services": 0.450,
@@ -196,33 +152,22 @@
       },
       "section_weights": {
         "transport_accessibility": {
-          "ground_public_transport": 0.234,
-          "rail_transit": 0.319,
-          "vehicle_support_infrastructure": 0.213,
-          "parking_infrastructure": 0.234
+          "public_transport_accessibility": 0.553,
+          "personal_vehicle_accessibility": 0.447
         },
         "social_infrastructure": {
-          "general_education": 0.205,
-          "children_medical_facilities": 0.159,
-          "children_leisure_additional_education": 0.136,
-          "government_facilities": 0.227,
-          "adult_medical_facilities": 0.273
+          "child_social_infrastructure": 0.500,
+          "government_institutions_accessibility": 0.227,
+          "adult_medical_facilities_accessibility": 0.273
         },
         "commercial_household": {
-          "grocery_stores": 0.333,
-          "pharmacies": 0.231,
-          "repair_service": 0.256,
-          "markets": 0.180
+          "essential_stores": 0.564,
+          "household_infrastructure_accessibility": 0.436
         },
         "recreation_environment": {
-          "industrial_pollution": 0.123,
-          "waste_accumulation_sites": 0.123,
-          "water_bodies": 0.110,
-          "parks_greenery": 0.151,
-          "cultural_environment": 0.137,
-          "catering_leisure": 0.151,
-          "sports_infrastructure": 0.137,
-          "children_leisure": 0.068
+          "environmental_conditions": 0.246,
+          "natural_recreation_potential": 0.261,
+          "cultural_leisure_infrastructure": 0.493
         },
         "safety_economic_stability": {
           "emergency_services": 0.417,
@@ -242,33 +187,22 @@
       },
       "section_weights": {
         "transport_accessibility": {
-          "ground_public_transport": 0.437,
-          "rail_transit": 0.313,
-          "vehicle_support_infrastructure": 0.125,
-          "parking_infrastructure": 0.125
+          "public_transport_accessibility": 0.750,
+          "personal_vehicle_accessibility": 0.250
         },
         "social_infrastructure": {
-          "general_education": 0.070,
-          "children_medical_facilities": 0.093,
-          "children_leisure_additional_education": 0.116,
-          "government_facilities": 0.302,
-          "adult_medical_facilities": 0.419
+          "child_social_infrastructure": 0.279,
+          "government_institutions_accessibility": 0.302,
+          "adult_medical_facilities_accessibility": 0.419
         },
         "commercial_household": {
-          "grocery_stores": 0.295,
-          "pharmacies": 0.364,
-          "repair_service": 0.182,
-          "markets": 0.159
+          "essential_stores": 0.659,
+          "household_infrastructure_accessibility": 0.341
         },
         "recreation_environment": {
-          "industrial_pollution": 0.155,
-          "waste_accumulation_sites": 0.155,
-          "water_bodies": 0.127,
-          "parks_greenery": 0.197,
-          "cultural_environment": 0.141,
-          "catering_leisure": 0.070,
-          "sports_infrastructure": 0.099,
-          "children_leisure": 0.056
+          "environmental_conditions": 0.310,
+          "natural_recreation_potential": 0.324,
+          "cultural_leisure_infrastructure": 0.366
         },
         "safety_economic_stability": {
           "emergency_services": 0.600,
@@ -288,33 +222,22 @@
       },
       "section_weights": {
         "transport_accessibility": {
-          "ground_public_transport": 0.357,
-          "rail_transit": 0.310,
-          "vehicle_support_infrastructure": 0.119,
-          "parking_infrastructure": 0.214
+          "public_transport_accessibility": 0.667,
+          "personal_vehicle_accessibility": 0.333
         },
         "social_infrastructure": {
-          "general_education": 0.087,
-          "children_medical_facilities": 0.130,
-          "children_leisure_additional_education": 0.130,
-          "government_facilities": 0.304,
-          "adult_medical_facilities": 0.349
+          "child_social_infrastructure": 0.347,
+          "government_institutions_accessibility": 0.304,
+          "adult_medical_facilities_accessibility": 0.349
         },
         "commercial_household": {
-          "grocery_stores": 0.341,
-          "pharmacies": 0.341,
-          "repair_service": 0.195,
-          "markets": 0.123
+          "essential_stores": 0.682,
+          "household_infrastructure_accessibility": 0.318
         },
         "recreation_environment": {
-          "industrial_pollution": 0.159,
-          "waste_accumulation_sites": 0.159,
-          "water_bodies": 0.116,
-          "parks_greenery": 0.176,
-          "cultural_environment": 0.116,
-          "catering_leisure": 0.101,
-          "sports_infrastructure": 0.101,
-          "children_leisure": 0.072
+          "environmental_conditions": 0.318,
+          "natural_recreation_potential": 0.292,
+          "cultural_leisure_infrastructure": 0.390
         },
         "safety_economic_stability": {
           "emergency_services": 0.625,

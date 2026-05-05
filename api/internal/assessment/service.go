@@ -24,6 +24,9 @@ const (
 
 	defaultRadiusM = 1000.0
 	maxRadiusM     = 5000.0
+
+	maxUsedObjects = 100
+	maxUsedAreas   = 50
 )
 
 type Service struct {
@@ -115,21 +118,23 @@ type SectionResult struct {
 }
 
 type IndicatorResult struct {
-	ID            string                             `json:"id"`
-	Title         string                             `json:"title"`
-	GroupID       string                             `json:"group_id"`
-	GroupTitle    string                             `json:"group_title"`
-	SectionID     string                             `json:"section_id"`
-	SectionTitle  string                             `json:"section_title"`
-	Method        string                             `json:"method"`
-	Unit          string                             `json:"unit"`
-	Weight        float64                            `json:"weight"`
-	RadiusM       *float64                           `json:"radius_m,omitempty"`
-	RawValue      *float64                           `json:"raw_value"`
-	Score         *float64                           `json:"score"`
-	Status        string                             `json:"status"`
-	Message       string                             `json:"message,omitempty"`
-	NearestObject *store.NearestInfrastructureObject `json:"nearest_object,omitempty"`
+	ID            string                                 `json:"id"`
+	Title         string                                 `json:"title"`
+	GroupID       string                                 `json:"group_id"`
+	GroupTitle    string                                 `json:"group_title"`
+	SectionID     string                                 `json:"section_id"`
+	SectionTitle  string                                 `json:"section_title"`
+	Method        string                                 `json:"method"`
+	Unit          string                                 `json:"unit"`
+	Weight        float64                                `json:"weight"`
+	RadiusM       *float64                               `json:"radius_m,omitempty"`
+	RawValue      *float64                               `json:"raw_value"`
+	Score         *float64                               `json:"score"`
+	Status        string                                 `json:"status"`
+	Message       string                                 `json:"message,omitempty"`
+	NearestObject *store.NearestInfrastructureObject     `json:"nearest_object,omitempty"`
+	UsedObjects   []store.NearestInfrastructureObject    `json:"used_objects,omitempty"`
+	UsedAreas     []store.InfrastructureAreaIntersection `json:"used_areas,omitempty"`
 }
 
 func NewService(store *store.Store, configPath string, weightsPath string) (*Service, error) {
@@ -272,7 +277,8 @@ func (s *Service) evaluateIndicator(
 
 	switch cfg.Method {
 	case MethodNearestDistance:
-		nearest, err := s.store.NearestInfrastructureObject(ctx, lon, lat, selectorFromConfig(cfg))
+		selector := selectorFromConfig(cfg)
+		nearest, err := s.store.NearestInfrastructureObject(ctx, lon, lat, selector)
 		if err != nil {
 			if errors.Is(err, store.ErrNotFound) {
 				result.Status = "no_data"
@@ -286,28 +292,46 @@ func (s *Service) evaluateIndicator(
 		result.RawValue = floatPtr(round(nearest.DistanceM, 3))
 
 	case MethodCountInRadius:
-		count, err := s.store.CountInfrastructureObjectsInRadius(ctx, lon, lat, radiusM, selectorFromConfig(cfg))
+		selector := selectorFromConfig(cfg)
+		count, err := s.store.CountInfrastructureObjectsInRadius(ctx, lon, lat, radiusM, selector)
+		if err != nil {
+			return IndicatorResult{}, err
+		}
+		objects, err := s.store.InfrastructureObjectsInRadius(ctx, lon, lat, radiusM, selector, maxUsedObjects)
 		if err != nil {
 			return IndicatorResult{}, err
 		}
 		result.RadiusM = floatPtr(radiusM)
 		result.RawValue = floatPtr(float64(count))
+		result.UsedObjects = objects
 
 	case MethodDistinctTypesInRadius:
-		count, err := s.store.CountDistinctInfrastructureObjectTypesInRadius(ctx, lon, lat, radiusM, selectorFromConfig(cfg))
+		selector := selectorFromConfig(cfg)
+		count, err := s.store.CountDistinctInfrastructureObjectTypesInRadius(ctx, lon, lat, radiusM, selector)
+		if err != nil {
+			return IndicatorResult{}, err
+		}
+		objects, err := s.store.InfrastructureObjectsInRadius(ctx, lon, lat, radiusM, selector, maxUsedObjects)
 		if err != nil {
 			return IndicatorResult{}, err
 		}
 		result.RadiusM = floatPtr(radiusM)
 		result.RawValue = floatPtr(float64(count))
+		result.UsedObjects = objects
 
 	case MethodAreaIntersectionM2:
-		areaM2, err := s.store.InfrastructureAreaIntersectionM2(ctx, lon, lat, radiusM, selectorFromConfig(cfg))
+		selector := selectorFromConfig(cfg)
+		areaM2, err := s.store.InfrastructureAreaIntersectionM2(ctx, lon, lat, radiusM, selector)
+		if err != nil {
+			return IndicatorResult{}, err
+		}
+		areas, err := s.store.InfrastructureAreaIntersections(ctx, lon, lat, radiusM, selector, maxUsedAreas)
 		if err != nil {
 			return IndicatorResult{}, err
 		}
 		result.RadiusM = floatPtr(radiusM)
 		result.RawValue = floatPtr(round(areaM2, 3))
+		result.UsedAreas = areas
 
 	case MethodDistrictMetric:
 		value, ok := districtMetricValue(cfg.MetricKey, municipality)
@@ -408,7 +432,7 @@ func groupIndicators(indicators []IndicatorResult, profile ProfileWeights) []Gro
 			})
 		}
 
-		groups[groupPos].Sections[sectionPos].Indicators = append(groups[groupPos].Sections[sectionPos].Indicators, indicator)
+		groups[groupPos].Sections[sectionPos].Indicators = append(groups[groupPos].Sections[sectionPos].Indicators, indicatorWithoutMapFeatures(indicator))
 	}
 
 	for groupPos := range groups {
@@ -419,6 +443,13 @@ func groupIndicators(indicators []IndicatorResult, profile ProfileWeights) []Gro
 	}
 
 	return groups
+}
+
+func indicatorWithoutMapFeatures(indicator IndicatorResult) IndicatorResult {
+	indicator.NearestObject = nil
+	indicator.UsedObjects = nil
+	indicator.UsedAreas = nil
+	return indicator
 }
 
 func aggregateIndicatorScores(indicators []IndicatorResult) *float64 {

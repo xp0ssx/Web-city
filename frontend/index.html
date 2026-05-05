@@ -319,7 +319,8 @@
       maxBounds: MOSCOW_BOUNDS,
       maxBoundsViscosity: 1.0,
       minZoom: 9,
-      maxZoom: 19
+      maxZoom: 19,
+      preferCanvas: true
     }).setView([55.751244, 37.618423], 10);
 
     map.attributionControl.setPrefix(false);
@@ -594,8 +595,11 @@
     }
 
     function renderIndicatorRow(indicator) {
-      const object = indicator.nearest_object;
+      const fullIndicator = indicatorWithMapFeatures(indicator);
+      const object = fullIndicator.nearest_object;
       const objectText = object ? `<div>Объект: ${escapeHtml(object.name)}</div>` : "";
+      const featureCount = usedFeatureCount(fullIndicator);
+      const featureText = featureCount ? `<div>Показано на карте: ${featureCount}</div>` : "";
       const status = indicator.status === "ok" ? "" : `<div>${escapeHtml(indicator.message || indicator.status)}</div>`;
       return `
         <button class="row" data-indicator-id="${escapeHtml(indicator.id)}">
@@ -608,6 +612,7 @@
             <div>Значение: ${escapeHtml(formatRaw(indicator))}</div>
             <div>Вес показателя: ${indicator.weight.toLocaleString("ru-RU", { maximumFractionDigits: 3 })}</div>
             ${objectText}
+            ${featureText}
             ${status}
           </div>
         </button>
@@ -669,40 +674,81 @@
       if (selectedGroupId) {
         return assessment.indicators.filter((indicator) => indicator.group_id === selectedGroupId);
       }
-      return assessment.indicators;
+      return [];
+    }
+
+    function indicatorWithMapFeatures(indicator) {
+      return assessment?.indicators.find((item) => item.id === indicator.id) || indicator;
     }
 
     function renderUsedObjects(indicatorId = "") {
       usedObjectsLayer.clearLayers();
       const indicators = currentVisibleIndicators(indicatorId);
-      const seen = new Set();
+      const seenObjects = new Set();
+      const seenAreas = new Set();
       const bounds = [];
 
       indicators.forEach((indicator) => {
-        const object = indicator.nearest_object;
-        if (!object || seen.has(`${object.source}:${object.source_dataset_id}:${object.source_object_id}:${object.source_point_index}`)) {
-          return;
-        }
-        seen.add(`${object.source}:${object.source_dataset_id}:${object.source_object_id}:${object.source_point_index}`);
+        const objects = [
+          indicator.nearest_object,
+          ...(Array.isArray(indicator.used_objects) ? indicator.used_objects : [])
+        ].filter(Boolean);
 
-        const latlng = objectLatLngFromSelectedPoint(object);
-        if (!latlng) return;
+        objects.forEach((object) => {
+          const key = `${object.source}:${object.source_dataset_id}:${object.source_object_id}:${object.source_point_index}`;
+          if (seenObjects.has(key)) return;
+          seenObjects.add(key);
 
-        const marker = L.circleMarker(latlng, {
-          radius: 6,
-          color: "#c2410c",
-          weight: 2,
-          fillColor: "#f97316",
-          fillOpacity: 0.82
-        }).addTo(usedObjectsLayer);
-        marker.bindPopup(`
-          <div style="min-width:220px">
-            <div style="font-weight:700;margin-bottom:5px">${escapeHtml(object.name)}</div>
-            <div>${escapeHtml(object.object_type)}</div>
-            <div>Расстояние: ${Math.round(object.distance_m).toLocaleString("ru-RU")} м</div>
-          </div>
-        `);
-        bounds.push(latlng);
+          const latlng = objectLatLngFromSelectedPoint(object);
+          if (!latlng) return;
+
+          const marker = L.circleMarker(latlng, {
+            radius: 6,
+            color: "#c2410c",
+            weight: 2,
+            fillColor: "#f97316",
+            fillOpacity: 0.82
+          }).addTo(usedObjectsLayer);
+          marker.bindPopup(`
+            <div style="min-width:220px">
+              <div style="font-weight:700;margin-bottom:5px">${escapeHtml(object.name)}</div>
+              <div>${escapeHtml(object.object_type)}</div>
+              <div>Расстояние: ${Math.round(object.distance_m).toLocaleString("ru-RU")} м</div>
+            </div>
+          `);
+          bounds.push(latlng);
+        });
+
+        const areas = Array.isArray(indicator.used_areas) ? indicator.used_areas : [];
+        areas.forEach((area) => {
+          const key = `${area.source}:${area.source_dataset_id}:${area.source_object_id}`;
+          if (seenAreas.has(key)) return;
+          seenAreas.add(key);
+
+          const geometry = areaGeometryFromResponse(area);
+          if (!geometry) return;
+
+          const layer = L.geoJSON(geometry, {
+            style: {
+              color: "#15803d",
+              weight: 2,
+              fillColor: "#22c55e",
+              fillOpacity: 0.22
+            }
+          }).addTo(usedObjectsLayer);
+          layer.bindPopup(`
+            <div style="min-width:220px">
+              <div style="font-weight:700;margin-bottom:5px">${escapeHtml(area.name)}</div>
+              <div>${escapeHtml(area.object_type)}</div>
+              <div>Площадь в радиусе: ${Math.round(area.intersection_m2).toLocaleString("ru-RU")} м²</div>
+            </div>
+          `);
+
+          const layerBounds = layer.getBounds();
+          if (layerBounds.isValid()) {
+            bounds.push(layerBounds.getNorthWest(), layerBounds.getSouthEast());
+          }
+        });
       });
 
       if (bounds.length && indicatorId) {
@@ -715,6 +761,24 @@
         return L.latLng(object.lat, object.lon);
       }
       return null;
+    }
+
+    function areaGeometryFromResponse(area) {
+      if (!area.geometry) return null;
+      if (typeof area.geometry === "string") {
+        try {
+          return JSON.parse(area.geometry);
+        } catch {
+          return null;
+        }
+      }
+      return area.geometry;
+    }
+
+    function usedFeatureCount(indicator) {
+      const objects = Array.isArray(indicator.used_objects) ? indicator.used_objects.length : 0;
+      const areas = Array.isArray(indicator.used_areas) ? indicator.used_areas.length : 0;
+      return objects + areas;
     }
 
     map.on("click", (event) => {
