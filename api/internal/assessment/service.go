@@ -331,7 +331,10 @@ func (s *Service) Evaluate(ctx context.Context, req EvaluateRequest) (Evaluation
 	}
 
 	municipality, err := s.store.FindMunicipalityByPoint(ctx, req.Lon, req.Lat)
-	if err != nil && !errors.Is(err, store.ErrNotFound) {
+	if err != nil {
+		if errors.Is(err, store.ErrNotFound) {
+			return EvaluationResult{}, RequestError{Message: "point is outside Moscow boundaries"}
+		}
 		return EvaluationResult{}, fmt.Errorf("find municipality failed: %w", err)
 	}
 	result.Municipality = municipality

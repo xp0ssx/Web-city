@@ -1122,6 +1122,9 @@
       if (text === "password must be at least 6 characters") return "Пароль должен быть не короче 6 символов.";
       if (text === "preset name is required") return "Введите название набора.";
       if (text === "authentication required") return "Нужно войти в аккаунт.";
+      if (text === "point is outside Moscow boundaries") return "Точка находится за пределами Москвы. Выберите точку внутри границ города.";
+      if (text === "coordinates must be finite numbers") return "Координаты должны быть корректными числами.";
+      if (text === "coordinates are outside valid lon/lat ranges") return "Координаты находятся вне допустимого диапазона.";
       return text;
     }
 
@@ -1939,7 +1942,12 @@
         setStatus("Оценка рассчитана.");
       } catch (error) {
         if (requestId !== evaluationRequestId) return;
-        setStatus(`Ошибка расчёта: ${error.message}`);
+        assessment = null;
+        clearDrilldownSelection();
+        highlightMunicipality();
+        renderAssessment();
+        renderUsedObjects();
+        setStatus(`Ошибка расчёта: ${userFriendlyError(error.message)}`);
       }
     }
 
@@ -2028,9 +2036,16 @@
         if (!isCompareMode()) return;
         if (requestId !== point.requestId) return;
         point.loading = false;
-        point.error = error.message;
+        point.assessment = null;
+        point.error = userFriendlyError(error.message);
+        if (point.id === activeComparisonPointId) {
+          assessment = null;
+          clearDrilldownSelection();
+          highlightMunicipality();
+          renderUsedObjects();
+        }
         renderAssessment();
-        setStatus(`Ошибка расчёта: ${error.message}`);
+        setStatus(`Ошибка расчёта: ${userFriendlyError(error.message)}`);
       }
     }
 
@@ -2091,7 +2106,7 @@
     }
 
     function renderAssessmentDetails() {
-      const municipality = assessment.municipality?.name || "вне границ муниципалитетов";
+      const municipality = assessment.municipality?.name || "не определён";
       const score = Number(assessment.score || 0);
       const isCustomAssessment = assessment.weights_mode === "custom";
       const profileTitle = isCustomAssessment ? "Пользовательский профиль" : (assessment.profile_title || assessment.profile);
