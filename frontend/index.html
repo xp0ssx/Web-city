@@ -64,7 +64,7 @@
 
     .controls {
       display: grid;
-      grid-template-columns: 1fr 120px;
+      grid-template-columns: minmax(0, 1fr) 110px 130px;
       gap: 10px;
       align-items: end;
     }
@@ -77,7 +77,8 @@
       color: var(--muted);
     }
 
-    .field select {
+    .field select,
+    .field input {
       width: 100%;
       min-height: 38px;
       padding: 8px 10px;
@@ -201,6 +202,29 @@
       font-size: 12px;
     }
 
+    .user-state {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .account-actions {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 9000;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      max-width: min(420px, calc(100vw - 28px));
+    }
+
+    .account-actions .user-state {
+      flex-basis: 100%;
+      text-align: right;
+      text-shadow: 0 1px 0 #fff;
+    }
+
     .modal {
       position: fixed;
       inset: 0;
@@ -287,6 +311,57 @@
 
     .help-content li {
       margin: 4px 0;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .auth-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preset-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .preset-item {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .preset-item:hover {
+      border-color: #9ab8e8;
+      background: #fbfdff;
+    }
+
+    .preset-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .preset-details {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
     }
 
     .modal-actions {
@@ -626,6 +701,79 @@
       line-height: 1.35;
     }
 
+    .compare-list {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .compare-point {
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-left: 5px solid #8a99ad;
+      border-radius: 8px;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .compare-point:hover {
+      border-color: #9ab8e8;
+      border-left-color: #1f6feb;
+      background: #fbfdff;
+    }
+
+    .compare-point.active {
+      border-color: #9ab8e8;
+      border-left-color: #1f6feb;
+      background: #f2f7ff;
+    }
+
+    .compare-title {
+      min-width: 0;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .compare-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .compare-score {
+      min-width: 44px;
+      text-align: right;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .compare-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      background: #415168;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.28);
+    }
+
+    .compare-marker.active {
+      background: #1f6feb;
+    }
+
     .map {
       width: 100%;
       height: 100%;
@@ -658,6 +806,14 @@
         order: 1;
         min-height: 360px;
       }
+
+      .controls {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .controls .field:first-child {
+        grid-column: 1 / -1;
+      }
     }
   </style>
 </head>
@@ -685,12 +841,22 @@
               <option value="1500">1500 м</option>
             </select>
           </div>
+          <div class="field">
+            <label for="modeInput">Режим</label>
+            <select id="modeInput">
+              <option value="single" selected>Одна точка</option>
+              <option value="compare">Сравнение</option>
+            </select>
+          </div>
         </div>
         <div class="status" id="statusBox">Выберите точку на карте.</div>
         <div class="actions">
           <button class="action-button" id="editWeightsButton" type="button">Изменить веса</button>
           <button class="action-button" id="resetWeightsButton" type="button">Сбросить веса</button>
           <button class="action-button" id="shareButton" type="button" disabled>Поделиться</button>
+          <button class="action-button" id="deletePointButton" type="button" hidden>Удалить точку</button>
+          <button class="action-button" id="clearComparisonButton" type="button" hidden>Очистить</button>
+          <button class="action-button help-button" id="helpButton" type="button" aria-label="Как считается оценка">?</button>
           <span class="weights-state" id="weightsMode">профиль</span>
         </div>
       </header>
@@ -701,6 +867,13 @@
     </aside>
 
     <main id="map" class="map"></main>
+  </div>
+
+  <div class="account-actions">
+    <button class="action-button" id="authButton" type="button">Войти</button>
+    <button class="action-button" id="presetButton" type="button" disabled>Наборы весов</button>
+    <button class="action-button" id="logoutButton" type="button" hidden>Выйти</button>
+    <span class="user-state" id="userState">Наборы весов доступны после входа.</span>
   </div>
 
   <div class="modal" id="weightsModal" hidden>
@@ -718,6 +891,93 @@
           <button class="action-button" id="resetDraftWeightsButton" type="button">Вернуть профиль</button>
           <button class="action-button" id="cancelWeightsButton" type="button">Отмена</button>
           <button class="action-button primary-button" id="applyWeightsButton" type="button">Применить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="helpModal" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+      <div class="modal-header">
+        <h2 class="modal-title" id="helpModalTitle">Как считается оценка</h2>
+        <button class="action-button" id="closeHelpButton" type="button">Закрыть</button>
+      </div>
+      <div class="modal-body">
+        <div class="help-content">
+          <section>
+            <h3>Что оценивается</h3>
+            <p>Для выбранной точки система считает набор простых показателей: расстояния до ближайших объектов, количество объектов в радиусе, площади пересечения с зелеными и водными зонами, а также районные экономические показатели.</p>
+          </section>
+          <section>
+            <h3>Как получается балл</h3>
+            <p>Каждый простой показатель нормируется в шкалу от 0 до 100 по эталонному и браковочному значениям. Затем показатели сворачиваются по дереву: показатель -> подгруппа -> секция -> группа -> итоговая оценка.</p>
+          </section>
+          <section>
+            <h3>Как работают веса</h3>
+            <p>Вес показывает важность элемента среди соседних элементов того же уровня. Сумма весов внутри каждой группы соседей должна быть 100%. Пользовательские веса меняют вклад элементов в итог, но не меняют сами исходные значения показателей.</p>
+          </section>
+          <section>
+            <h3>Оценка и вклад</h3>
+            <ul>
+              <li><strong>Оценка</strong> показывает качество элемента само по себе.</li>
+              <li><strong>Вклад</strong> показывает, сколько этот элемент добавляет к уровню выше с учетом веса.</li>
+              <li>Цвет строки строится по оценке, а не по вкладу.</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Если нет данных</h3>
+            <p>Если по отдельному показателю нет данных, он не участвует в агрегации для соответствующего уровня. Остальные доступные показатели продолжают участвовать в расчете.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="authModal" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <div class="modal-header">
+        <h2 class="modal-title" id="authModalTitle">Аккаунт</h2>
+        <button class="action-button" id="closeAuthButton" type="button">Закрыть</button>
+      </div>
+      <div class="modal-body">
+        <div class="auth-form">
+          <div class="field">
+            <label for="authLoginInput">Логин</label>
+            <input id="authLoginInput" type="text" autocomplete="username" />
+          </div>
+          <div class="field">
+            <label for="authPasswordInput">Пароль</label>
+            <input id="authPasswordInput" type="password" autocomplete="current-password" />
+          </div>
+          <div class="auth-actions">
+            <button class="action-button primary-button" id="loginButton" type="button">Войти</button>
+            <button class="action-button" id="registerButton" type="button">Зарегистрироваться</button>
+          </div>
+          <div class="status" id="authStatusBox"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="presetModal" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="presetModalTitle">
+      <div class="modal-header">
+        <h2 class="modal-title" id="presetModalTitle">Наборы весов</h2>
+        <button class="action-button" id="closePresetButton" type="button">Закрыть</button>
+      </div>
+      <div class="modal-body">
+        <div class="auth-form">
+          <div class="field">
+            <label for="presetNameInput">Название набора</label>
+            <input id="presetNameInput" type="text" placeholder="Например: Мой профиль" />
+          </div>
+          <div class="auth-actions">
+            <button class="action-button primary-button" id="savePresetButton" type="button">Сохранить текущие веса</button>
+          </div>
+          <div class="status" id="presetStatusBox"></div>
+        </div>
+        <div class="preset-list" id="presetList">
+          <div class="empty">Наборов весов пока нет.</div>
         </div>
       </div>
     </div>
@@ -760,9 +1020,32 @@
 
     const profileInput = document.getElementById("profileInput");
     const radiusInput = document.getElementById("radiusInput");
+    const modeInput = document.getElementById("modeInput");
     const statusBox = document.getElementById("statusBox");
     const resultBox = document.getElementById("resultBox");
     const shareButton = document.getElementById("shareButton");
+    const deletePointButton = document.getElementById("deletePointButton");
+    const clearComparisonButton = document.getElementById("clearComparisonButton");
+    const helpButton = document.getElementById("helpButton");
+    const helpModal = document.getElementById("helpModal");
+    const closeHelpButton = document.getElementById("closeHelpButton");
+    const authButton = document.getElementById("authButton");
+    const logoutButton = document.getElementById("logoutButton");
+    const presetButton = document.getElementById("presetButton");
+    const userState = document.getElementById("userState");
+    const authModal = document.getElementById("authModal");
+    const closeAuthButton = document.getElementById("closeAuthButton");
+    const authLoginInput = document.getElementById("authLoginInput");
+    const authPasswordInput = document.getElementById("authPasswordInput");
+    const authStatusBox = document.getElementById("authStatusBox");
+    const loginButton = document.getElementById("loginButton");
+    const registerButton = document.getElementById("registerButton");
+    const presetModal = document.getElementById("presetModal");
+    const closePresetButton = document.getElementById("closePresetButton");
+    const presetList = document.getElementById("presetList");
+    const presetNameInput = document.getElementById("presetNameInput");
+    const savePresetButton = document.getElementById("savePresetButton");
+    const presetStatusBox = document.getElementById("presetStatusBox");
     const editWeightsButton = document.getElementById("editWeightsButton");
     const resetWeightsButton = document.getElementById("resetWeightsButton");
     const weightsModal = document.getElementById("weightsModal");
@@ -785,6 +1068,10 @@
     let municipalityGeoJSON = null;
     let highlightedMunicipality = null;
     let evaluationRequestId = 0;
+    let currentUser = null;
+    let comparisonPoints = [];
+    let activeComparisonPointId = null;
+    let nextComparisonPointId = 1;
 
     editWeightsButton.disabled = true;
 
@@ -801,12 +1088,89 @@
       statusBox.textContent = message;
     }
 
+    function authToken() {
+      return localStorage.getItem("webcity_auth_token") || "";
+    }
+
+    function setAuthSession(token, user) {
+      if (token) {
+        localStorage.setItem("webcity_auth_token", token);
+      } else {
+        localStorage.removeItem("webcity_auth_token");
+      }
+      currentUser = user || null;
+      updateAuthState();
+    }
+
+    function updateAuthState() {
+      const signedIn = Boolean(currentUser);
+      authButton.hidden = signedIn;
+      logoutButton.hidden = !signedIn;
+      presetButton.disabled = !signedIn;
+      userState.textContent = signedIn
+        ? `Вход: ${currentUser.login}. Можно сохранять наборы весов.`
+        : "Наборы весов доступны после входа.";
+    }
+
+    function authHeaders() {
+      const token = authToken();
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    function isCompareMode() {
+      return modeInput.value === "compare";
+    }
+
     function setSelectedPoint(latlng, updateUrl = true) {
       selectedPoint = latlng;
-      shareButton.disabled = !selectedPoint;
-      if (updateUrl) {
+      updateSelectionControls();
+      if (updateUrl && !isCompareMode()) {
         updateShareUrl();
       }
+    }
+
+    function activeComparisonPoint() {
+      return comparisonPoints.find((point) => point.id === activeComparisonPointId) || null;
+    }
+
+    function comparisonPointIndex(pointID) {
+      const index = comparisonPoints.findIndex((point) => point.id === pointID);
+      return index >= 0 ? index : 0;
+    }
+
+    function comparisonPointTitle(point) {
+      return `Точка ${comparisonPointIndex(point.id) + 1}`;
+    }
+
+    function updateSelectionControls() {
+      const compare = isCompareMode();
+      shareButton.disabled = compare || !selectedPoint;
+      shareButton.title = compare ? "Ссылка пока работает только для одной точки." : "";
+      deletePointButton.hidden = !compare;
+      clearComparisonButton.hidden = !compare;
+      deletePointButton.disabled = !compare || !activeComparisonPoint();
+      clearComparisonButton.disabled = !compare || comparisonPoints.length === 0;
+    }
+
+    function clearDrilldownSelection() {
+      selectedGroupId = "";
+      selectedSectionId = "";
+      selectedSubsectionId = "";
+    }
+
+    function selectComparisonPoint(pointID, resetDrilldown = true) {
+      const point = comparisonPoints.find((item) => item.id === pointID) || comparisonPoints[0] || null;
+      activeComparisonPointId = point?.id || null;
+      selectedPoint = point?.latlng || null;
+      assessment = point?.assessment || null;
+      if (resetDrilldown) {
+        clearDrilldownSelection();
+      }
+      updateSelectionControls();
+      renderSelection();
+      highlightMunicipality();
+      renderAssessment();
+      renderUsedObjects();
     }
 
     function validSelectValue(select, value) {
@@ -855,7 +1219,7 @@
       customWeights = null;
       updateWeightsState();
       updateShareUrl();
-      evaluateSelectedPoint();
+      evaluateCurrentSelection();
     }
 
     function customWeightsForRequest() {
@@ -1036,6 +1400,179 @@
       draftWeights = null;
     }
 
+    function openHelpModal() {
+      helpModal.hidden = false;
+    }
+
+    function closeHelpModal() {
+      helpModal.hidden = true;
+    }
+
+    function openAuthModal() {
+      authStatusBox.textContent = "";
+      authModal.hidden = false;
+      authLoginInput.focus();
+    }
+
+    function closeAuthModal() {
+      authModal.hidden = true;
+    }
+
+    async function submitAuth(path) {
+      const login = authLoginInput.value.trim();
+      const password = authPasswordInput.value;
+      if (!login || !password) {
+        authStatusBox.textContent = "Введите логин и пароль.";
+        return;
+      }
+
+      authStatusBox.textContent = "Отправка...";
+      try {
+        const response = await fetchJson(`${API_BASE}/auth/${path}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ login, password })
+        });
+        setAuthSession(response.token, response.user);
+        closeAuthModal();
+        setStatus("Вход выполнен. Следующие расчёты будут сохраняться в наборы весов.");
+      } catch (error) {
+        authStatusBox.textContent = `Ошибка: ${error.message}`;
+      }
+    }
+
+    async function restoreAuthSession() {
+      if (!authToken()) {
+        updateAuthState();
+        return;
+      }
+      try {
+        const response = await fetchJson(`${API_BASE}/auth/me`);
+        setAuthSession(authToken(), response.user);
+      } catch {
+        setAuthSession("", null);
+      }
+    }
+
+    async function logout() {
+      try {
+        if (authToken()) {
+          await fetchJson(`${API_BASE}/auth/logout`, { method: "POST" });
+        }
+      } catch {
+        // Local logout is still valid if the server session is already gone.
+      }
+      setAuthSession("", null);
+      setStatus("Вы вышли из аккаунта.");
+    }
+
+    async function openPresetModal() {
+      presetModal.hidden = false;
+      presetStatusBox.textContent = "";
+      presetList.innerHTML = '<div class="empty">Загрузка наборов весов...</div>';
+      try {
+        const response = await fetchJson(`${API_BASE}/weight-presets/`);
+        renderPresets(response.items || []);
+      } catch (error) {
+        presetList.innerHTML = `<div class="empty">Не удалось загрузить наборы весов: ${escapeHtml(error.message)}</div>`;
+      }
+    }
+
+    function closePresetModal() {
+      presetModal.hidden = true;
+    }
+
+    async function saveCurrentPreset() {
+      const name = presetNameInput.value.trim();
+      if (!name) {
+        presetStatusBox.textContent = "Введите название набора.";
+        return;
+      }
+
+      presetStatusBox.textContent = "Сохранение...";
+      try {
+        await fetchJson(`${API_BASE}/weight-presets/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            profile: profileInput.value,
+            weights: activeWeights()
+          })
+        });
+        presetNameInput.value = "";
+        presetStatusBox.textContent = "Набор весов сохранён.";
+        const response = await fetchJson(`${API_BASE}/weight-presets/`);
+        renderPresets(response.items || []);
+      } catch (error) {
+        presetStatusBox.textContent = `Ошибка: ${error.message}`;
+      }
+    }
+
+    function renderPresets(items) {
+      if (!items.length) {
+        presetList.innerHTML = '<div class="empty">Наборов весов пока нет.</div>';
+        return;
+      }
+
+      presetList.innerHTML = items.map((item) => `
+        <div class="preset-item">
+          <div class="preset-title">
+            <span>${escapeHtml(item.name)}</span>
+            <span>${escapeHtml(profileTitleById(item.profile))}</span>
+          </div>
+          <div class="preset-details">
+            <div>Обновлён: ${new Date(item.updated_at).toLocaleString("ru-RU")}</div>
+            <div class="auth-actions">
+              <button class="action-button" data-preset-load="${item.id}" type="button">Загрузить</button>
+              <button class="action-button" data-preset-delete="${item.id}" type="button">Удалить</button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      presetList.querySelectorAll("[data-preset-load]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const item = items.find((entry) => String(entry.id) === button.dataset.presetLoad);
+          if (item) {
+            openPresetItem(item);
+          }
+        });
+      });
+
+      presetList.querySelectorAll("[data-preset-delete]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          await deletePreset(button.dataset.presetDelete);
+        });
+      });
+    }
+
+    function profileTitleById(profileID) {
+      return assessmentConfig?.profiles.find((profile) => profile.id === profileID)?.title || profileID;
+    }
+
+    function openPresetItem(item) {
+      if (item.profile && validSelectValue(profileInput, item.profile)) {
+        profileInput.value = item.profile;
+      }
+      customWeights = item.weights || null;
+      updateWeightsState();
+      updateShareUrl();
+      evaluateCurrentSelection();
+      closePresetModal();
+      setStatus("Набор весов загружен.");
+    }
+
+    async function deletePreset(presetID) {
+      try {
+        await fetchJson(`${API_BASE}/weight-presets/${presetID}`, { method: "DELETE" });
+        const response = await fetchJson(`${API_BASE}/weight-presets/`);
+        renderPresets(response.items || []);
+      } catch (error) {
+        presetStatusBox.textContent = `Ошибка удаления: ${error.message}`;
+      }
+    }
+
     function applyDraftWeights() {
       if (!draftWeights) return;
       updateDraftValidation();
@@ -1046,7 +1583,7 @@
       updateWeightsState();
       updateShareUrl();
       setStatus(customWeights ? "Пользовательские веса применены." : "Веса профиля восстановлены.");
-      evaluateSelectedPoint();
+      evaluateCurrentSelection();
     }
 
     function buildShareUrl() {
@@ -1067,7 +1604,7 @@
     }
 
     function updateShareUrl() {
-      if (!selectedPoint) return;
+      if (!selectedPoint || isCompareMode()) return;
       window.history.replaceState(null, "", buildShareUrl());
     }
 
@@ -1192,13 +1729,24 @@
       const response = await fetch(url, {
         headers: {
           Accept: "application/json",
-          ...(options.headers || {})
+          ...(options.headers || {}),
+          ...authHeaders()
         },
         ...options
       });
       if (!response.ok) {
         const text = await response.text();
-        throw new Error(text || `${response.status} ${response.statusText}`);
+        let message = text || `${response.status} ${response.statusText}`;
+        try {
+          message = JSON.parse(text).error || message;
+        } catch {
+          // Keep raw text if the response is not JSON.
+        }
+        if (response.status === 401 && authToken()) {
+          setAuthSession("", null);
+          message = "Сессия истекла. Войдите заново.";
+        }
+        throw new Error(message);
       }
       return response.json();
     }
@@ -1240,8 +1788,38 @@
       updateWeightsState();
     }
 
+    function comparisonMarkerIcon(point) {
+      const active = point.id === activeComparisonPointId;
+      return L.divIcon({
+        className: "",
+        html: `<div class="compare-marker${active ? " active" : ""}">${comparisonPointIndex(point.id) + 1}</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
+    }
+
     function renderSelection() {
       selectionLayer.clearLayers();
+      if (isCompareMode()) {
+        const radius = selectedRadius();
+        comparisonPoints.forEach((point) => {
+          const active = point.id === activeComparisonPointId;
+          if (active) {
+            L.circle(point.latlng, {
+              radius,
+              color: "#1f6feb",
+              weight: 2,
+              fillColor: "#1f6feb",
+              fillOpacity: 0.08
+            }).addTo(selectionLayer);
+          }
+          L.marker(point.latlng, { icon: comparisonMarkerIcon(point) })
+            .addTo(selectionLayer)
+            .on("click", () => selectComparisonPoint(point.id));
+        });
+        return;
+      }
+
       if (!selectedPoint) return;
 
       const radius = selectedRadius();
@@ -1256,6 +1834,28 @@
       L.marker(selectedPoint).addTo(selectionLayer);
     }
 
+    function buildAssessmentRequestBody(latlng) {
+      const requestBody = {
+        lat: latlng.lat,
+        lon: latlng.lng,
+        profile: profileInput.value,
+        radius_m: selectedRadius()
+      };
+      const weights = customWeightsForRequest();
+      if (weights) {
+        Object.assign(requestBody, weights);
+      }
+      return requestBody;
+    }
+
+    function evaluateCurrentSelection() {
+      if (isCompareMode()) {
+        evaluateComparisonPoints();
+      } else {
+        evaluateSelectedPoint();
+      }
+    }
+
     async function evaluateSelectedPoint() {
       if (!selectedPoint) return;
 
@@ -1265,28 +1865,15 @@
       usedObjectsLayer.clearLayers();
 
       try {
-        const requestBody = {
-          lat: selectedPoint.lat,
-          lon: selectedPoint.lng,
-          profile: profileInput.value,
-          radius_m: selectedRadius()
-        };
-        const weights = customWeightsForRequest();
-        if (weights) {
-          Object.assign(requestBody, weights);
-        }
-
         const nextAssessment = await fetchJson(`${API_BASE}/assessments/evaluate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify(buildAssessmentRequestBody(selectedPoint))
         });
         if (requestId !== evaluationRequestId) return;
 
         assessment = nextAssessment;
-        selectedGroupId = "";
-        selectedSectionId = "";
-        selectedSubsectionId = "";
+        clearDrilldownSelection();
         highlightMunicipality();
         renderAssessment();
         renderUsedObjects();
@@ -1295,6 +1882,117 @@
         if (requestId !== evaluationRequestId) return;
         setStatus(`Ошибка расчёта: ${error.message}`);
       }
+    }
+
+    function addComparisonPoint(latlng) {
+      const point = {
+        id: nextComparisonPointId++,
+        latlng,
+        assessment: null,
+        loading: false,
+        error: "",
+        requestId: 0
+      };
+      comparisonPoints.push(point);
+      activeComparisonPointId = point.id;
+      selectComparisonPoint(point.id);
+      evaluateComparisonPoint(point);
+    }
+
+    function deleteActiveComparisonPoint() {
+      const active = activeComparisonPoint();
+      if (!active) return;
+      const index = comparisonPointIndex(active.id);
+      comparisonPoints = comparisonPoints.filter((point) => point.id !== active.id);
+      const nextPoint = comparisonPoints[Math.min(index, comparisonPoints.length - 1)] || null;
+      activeComparisonPointId = nextPoint?.id || null;
+      selectedPoint = nextPoint?.latlng || null;
+      assessment = nextPoint?.assessment || null;
+      clearDrilldownSelection();
+      updateSelectionControls();
+      renderSelection();
+      highlightMunicipality();
+      renderAssessment();
+      renderUsedObjects();
+      setStatus(comparisonPoints.length ? "Точка удалена." : "Добавьте точки для сравнения кликом по карте.");
+    }
+
+    function clearComparisonPoints() {
+      comparisonPoints = [];
+      activeComparisonPointId = null;
+      selectedPoint = null;
+      assessment = null;
+      clearDrilldownSelection();
+      usedObjectsLayer.clearLayers();
+      updateSelectionControls();
+      renderSelection();
+      highlightMunicipality();
+      renderAssessment();
+      setStatus("Добавьте точки для сравнения кликом по карте.");
+    }
+
+    async function evaluateComparisonPoint(point) {
+      if (!point) return;
+
+      const requestId = ++point.requestId;
+      point.loading = true;
+      point.error = "";
+      if (point.id === activeComparisonPointId) {
+        assessment = point.assessment;
+        renderAssessment();
+      } else {
+        renderAssessment();
+      }
+      setStatus("Расчёт оценки для сравнения...");
+
+      try {
+        const nextAssessment = await fetchJson(`${API_BASE}/assessments/evaluate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(buildAssessmentRequestBody(point.latlng))
+        });
+        if (!isCompareMode()) return;
+        if (requestId !== point.requestId) return;
+
+        point.assessment = nextAssessment;
+        point.error = "";
+        point.loading = false;
+        if (point.id === activeComparisonPointId) {
+          assessment = point.assessment;
+          renderSelection();
+          highlightMunicipality();
+          renderUsedObjects();
+        }
+        renderAssessment();
+        setStatus("Оценки сравнения рассчитаны.");
+      } catch (error) {
+        if (!isCompareMode()) return;
+        if (requestId !== point.requestId) return;
+        point.loading = false;
+        point.error = error.message;
+        renderAssessment();
+        setStatus(`Ошибка расчёта: ${error.message}`);
+      }
+    }
+
+    function evaluateComparisonPoints() {
+      if (!comparisonPoints.length) {
+        renderSelection();
+        renderAssessment();
+        setStatus("Добавьте точки для сравнения кликом по карте.");
+        return;
+      }
+      comparisonPoints.forEach((point) => {
+        point.assessment = null;
+        point.error = "";
+        evaluateComparisonPoint(point);
+      });
+      const active = activeComparisonPoint();
+      assessment = active?.assessment || null;
+      clearDrilldownSelection();
+      renderSelection();
+      renderAssessment();
+      renderUsedObjects();
     }
 
     function highlightMunicipality() {
@@ -1319,11 +2017,21 @@
     }
 
     function renderAssessment() {
+      if (isCompareMode()) {
+        renderComparisonAssessment();
+        return;
+      }
+
       if (!assessment) {
         resultBox.innerHTML = '<div class="empty">Выберите точку на карте.</div>';
         return;
       }
 
+      resultBox.innerHTML = renderAssessmentDetails();
+      attachResultHandlers();
+    }
+
+    function renderAssessmentDetails() {
       const municipality = assessment.municipality?.name || "вне границ муниципалитетов";
       const score = Number(assessment.score || 0);
       const isCustomAssessment = assessment.weights_mode === "custom";
@@ -1332,7 +2040,7 @@
         ? `<div>Основа: <strong>${escapeHtml(assessment.base_profile_title || profileInput.options[profileInput.selectedIndex]?.text || "")}</strong></div>`
         : "";
 
-      resultBox.innerHTML = `
+      return `
         <div class="score-box">
           <div class="score" style="background:${scoreColor(score / 100)}">${totalScoreText(score)}</div>
           <div class="meta">
@@ -1345,7 +2053,68 @@
         </div>
         ${renderDrilldown()}
       `;
-      attachResultHandlers();
+    }
+
+    function renderComparisonAssessment() {
+      if (!comparisonPoints.length) {
+        resultBox.innerHTML = '<div class="empty">Кликайте по карте, чтобы добавить несколько точек и сравнить их общие оценки.</div>';
+        return;
+      }
+
+      const active = activeComparisonPoint();
+      assessment = active?.assessment || null;
+      const list = comparisonPoints.map((point) => renderComparisonPoint(point)).join("");
+      const activeContent = active?.loading
+        ? '<div class="empty">Оценка выбранной точки рассчитывается...</div>'
+        : active?.error
+          ? `<div class="empty">Ошибка расчёта выбранной точки: ${escapeHtml(active.error)}</div>`
+          : assessment
+            ? renderAssessmentDetails()
+            : '<div class="empty">Выберите точку в списке или на карте.</div>';
+
+      resultBox.innerHTML = `
+        <div class="compare-list">
+          ${list}
+        </div>
+        ${activeContent}
+      `;
+      attachComparisonHandlers();
+      if (assessment) {
+        attachResultHandlers();
+      }
+    }
+
+    function renderComparisonPoint(point) {
+      const active = point.id === activeComparisonPointId;
+      const score = point.assessment ? totalScoreText(point.assessment.score) : point.loading ? "..." : "нет";
+      const municipality = point.assessment?.municipality?.name || "";
+      const error = point.error ? `<div>Ошибка: ${escapeHtml(point.error)}</div>` : "";
+      const details = municipality
+        ? `<div>${escapeHtml(municipality)}</div>`
+        : point.loading
+          ? "<div>Расчёт...</div>"
+          : "<div>Ожидает расчёта</div>";
+      return `
+        <button class="compare-point${active ? " active" : ""}" data-compare-id="${point.id}" type="button">
+          <div>
+            <div class="compare-title">${escapeHtml(comparisonPointTitle(point))}</div>
+            <div class="compare-meta">
+              <div>${point.latlng.lat.toFixed(5)}, ${point.latlng.lng.toFixed(5)}</div>
+              ${details}
+              ${error}
+            </div>
+          </div>
+          <div class="compare-score" style="color:${score === "нет" || score === "..." ? "var(--muted)" : scoreColor(Number(score) / 100)}">${escapeHtml(score)}</div>
+        </button>
+      `;
+    }
+
+    function attachComparisonHandlers() {
+      resultBox.querySelectorAll("[data-compare-id]").forEach((el) => {
+        el.addEventListener("click", () => {
+          selectComparisonPoint(Number(el.dataset.compareId));
+        });
+      });
     }
 
     function renderDrilldown() {
@@ -1668,21 +2437,77 @@
     }
 
     map.on("click", (event) => {
-      setSelectedPoint(event.latlng);
-      evaluateSelectedPoint();
+      if (isCompareMode()) {
+        addComparisonPoint(event.latlng);
+      } else {
+        setSelectedPoint(event.latlng);
+        evaluateSelectedPoint();
+      }
     });
 
     profileInput.addEventListener("change", () => {
       customWeights = null;
       updateWeightsState();
       updateShareUrl();
-      evaluateSelectedPoint();
+      evaluateCurrentSelection();
     });
     radiusInput.addEventListener("change", () => {
       updateShareUrl();
-      evaluateSelectedPoint();
+      evaluateCurrentSelection();
+    });
+    modeInput.addEventListener("change", () => {
+      evaluationRequestId += 1;
+      clearDrilldownSelection();
+      usedObjectsLayer.clearLayers();
+      if (isCompareMode()) {
+        if (selectedPoint && !comparisonPoints.length) {
+          comparisonPoints.push({
+            id: nextComparisonPointId++,
+            latlng: selectedPoint,
+            assessment,
+            loading: false,
+            error: "",
+            requestId: 0
+          });
+          activeComparisonPointId = comparisonPoints[0].id;
+        }
+        selectComparisonPoint(activeComparisonPointId);
+        setStatus(comparisonPoints.length ? "Кликайте по карте, чтобы добавить точки для сравнения." : "Добавьте точки для сравнения кликом по карте.");
+      } else {
+        comparisonPoints.forEach((point) => {
+          point.loading = false;
+        });
+        const active = activeComparisonPoint();
+        if (active) {
+          selectedPoint = active.latlng;
+          assessment = active.assessment;
+        }
+        updateSelectionControls();
+        renderSelection();
+        highlightMunicipality();
+        renderAssessment();
+        renderUsedObjects();
+        updateShareUrl();
+        if (selectedPoint && !assessment) {
+          evaluateSelectedPoint();
+        } else {
+          setStatus(selectedPoint ? "Режим одной точки включён." : "Выберите точку на карте.");
+        }
+      }
     });
     shareButton.addEventListener("click", copyShareUrl);
+    deletePointButton.addEventListener("click", deleteActiveComparisonPoint);
+    clearComparisonButton.addEventListener("click", clearComparisonPoints);
+    helpButton.addEventListener("click", openHelpModal);
+    closeHelpButton.addEventListener("click", closeHelpModal);
+    authButton.addEventListener("click", openAuthModal);
+    closeAuthButton.addEventListener("click", closeAuthModal);
+    loginButton.addEventListener("click", () => submitAuth("login"));
+    registerButton.addEventListener("click", () => submitAuth("register"));
+    logoutButton.addEventListener("click", logout);
+    presetButton.addEventListener("click", openPresetModal);
+    closePresetButton.addEventListener("click", closePresetModal);
+    savePresetButton.addEventListener("click", saveCurrentPreset);
     editWeightsButton.addEventListener("click", openWeightsModal);
     resetWeightsButton.addEventListener("click", resetWeights);
     closeWeightsButton.addEventListener("click", closeWeightsModal);
@@ -1697,8 +2522,25 @@
         closeWeightsModal();
       }
     });
+    helpModal.addEventListener("click", (event) => {
+      if (event.target === helpModal) {
+        closeHelpModal();
+      }
+    });
+    authModal.addEventListener("click", (event) => {
+      if (event.target === authModal) {
+        closeAuthModal();
+      }
+    });
+    presetModal.addEventListener("click", (event) => {
+      if (event.target === presetModal) {
+        closePresetModal();
+      }
+    });
 
     updateWeightsState();
+    updateSelectionControls();
+    restoreAuthSession();
 
     Promise.all([loadAssessmentConfig(), loadBoundaries()])
       .then(() => {

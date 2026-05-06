@@ -41,6 +41,11 @@ func main() {
 	}
 
 	dbStore := store.New(db)
+	if err := dbStore.EnsureAppSchema(ctx); err != nil {
+		log.Fatalf("app schema init error: %v", err)
+	}
+
+	authHandler := handlers.NewAuthHandler(dbStore)
 	tagsHandler := handlers.NewTagsHandler(dbStore)
 	infrastructureHandler := handlers.NewInfrastructureHandler(dbStore)
 	tileHandler := handlers.NewTileHandler(dbStore, getEnv("TILE_CACHE_DIR", ""))
@@ -53,6 +58,7 @@ func main() {
 		log.Fatalf("assessment service init error: %v", err)
 	}
 	assessmentHandler := handlers.NewAssessmentHandler(assessmentService)
+	presetHandler := handlers.NewPresetHandler(dbStore)
 
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
@@ -61,8 +67,16 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Compress(5, "application/json", "image/svg+xml"))
 	r.Use(corsMiddleware)
+	r.Use(handlers.AuthContextMiddleware(dbStore))
 
 	r.Get("/healthz", healthHandler(db))
+
+	r.Route("/api/v1/auth", func(r chi.Router) {
+		r.Post("/register", authHandler.Register)
+		r.Post("/login", authHandler.Login)
+		r.Post("/logout", authHandler.Logout)
+		r.With(handlers.RequireAuth).Get("/me", authHandler.Me)
+	})
 
 	r.Route("/api/v1/tags", func(r chi.Router) {
 		r.Get("/keys", tagsHandler.Keys)
@@ -80,6 +94,13 @@ func main() {
 	r.Route("/api/v1/assessments", func(r chi.Router) {
 		r.Get("/config", assessmentHandler.Config)
 		r.Post("/evaluate", assessmentHandler.Evaluate)
+	})
+
+	r.Route("/api/v1/weight-presets", func(r chi.Router) {
+		r.Use(handlers.RequireAuth)
+		r.Get("/", presetHandler.List)
+		r.Post("/", presetHandler.Save)
+		r.Delete("/{id}", presetHandler.Delete)
 	})
 
 	r.Get("/api/v1/tiles/base/{z}/{x}/{y}", tileHandler.BaseSVG)
