@@ -12,8 +12,11 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var ErrLoginTaken = errors.New("login already exists")
 
 type User struct {
 	ID        int64     `json:"id"`
@@ -108,6 +111,10 @@ func (s *Store) CreateUser(ctx context.Context, login string, password string) (
 		RETURNING id, login, created_at
 	`, login, string(passwordHash)).Scan(&user.ID, &user.Login, &user.CreatedAt)
 	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return User{}, "", ErrLoginTaken
+		}
 		return User{}, "", err
 	}
 

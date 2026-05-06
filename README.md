@@ -244,3 +244,46 @@
       Источник: CSV-файл (поле yield_vs_bank_deposit)
 
       
+
+## Обновление данных
+
+Все этапы обновления запускаются через `updater` и переменную `UPDATER_MODE`.
+
+Ручной месячный запуск полного обновления:
+
+```bash
+docker compose --profile tools run --rm -e UPDATER_MODE=monthly updater
+```
+
+Режим `monthly` выполняет этапы строго по порядку:
+
+1. `osm-raw` — скачивание свежего OSM PBF, вырезка Москвы и импорт raw-таблиц.
+2. `osm` — пересборка инфраструктурных OSM-объектов по правилам.
+3. `map-layers` — пересборка локальной подложки и очистка кэша тайлов.
+4. `datamos` — обновление DataMos-датасетов.
+5. `static` — загрузка статических границ и экономических показателей.
+
+Если любой этап падает, следующие этапы не запускаются. Полный прогрев тайлов после обновления не обязателен: кэш восстанавливается лениво при запросах карты.
+
+Для автоматического запуска раз в месяц подготовлены systemd-шаблоны:
+
+```text
+deploy/systemd/web-city-monthly-update.service
+deploy/systemd/web-city-monthly-update.timer
+```
+
+Установка на сервере:
+
+```bash
+sudo cp deploy/systemd/web-city-monthly-update.service /etc/systemd/system/
+sudo cp deploy/systemd/web-city-monthly-update.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now web-city-monthly-update.timer
+```
+
+Проверка расписания и логов:
+
+```bash
+systemctl list-timers web-city-monthly-update.timer
+journalctl -u web-city-monthly-update.service -f
+```

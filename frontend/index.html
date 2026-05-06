@@ -1072,6 +1072,8 @@
     let comparisonPoints = [];
     let activeComparisonPointId = null;
     let nextComparisonPointId = 1;
+    let authLoading = false;
+    let presetLoading = false;
 
     editWeightsButton.disabled = true;
 
@@ -1110,6 +1112,40 @@
       userState.textContent = signedIn
         ? `Вход: ${currentUser.login}. Можно сохранять наборы весов.`
         : "Наборы весов доступны после входа.";
+    }
+
+    function userFriendlyError(message) {
+      const text = String(message || "");
+      if (text === "login already exists") return "Такой логин уже занят.";
+      if (text === "invalid login or password") return "Неверный логин или пароль.";
+      if (text === "login is required") return "Введите логин.";
+      if (text === "password must be at least 6 characters") return "Пароль должен быть не короче 6 символов.";
+      if (text === "preset name is required") return "Введите название набора.";
+      if (text === "authentication required") return "Нужно войти в аккаунт.";
+      return text;
+    }
+
+    function setAuthLoading(loading, message = "") {
+      authLoading = loading;
+      loginButton.disabled = loading;
+      registerButton.disabled = loading;
+      authLoginInput.disabled = loading;
+      authPasswordInput.disabled = loading;
+      if (message) {
+        authStatusBox.textContent = message;
+      }
+    }
+
+    function setPresetLoading(loading, message = "") {
+      presetLoading = loading;
+      savePresetButton.disabled = loading;
+      presetNameInput.disabled = loading;
+      presetList.querySelectorAll("button").forEach((button) => {
+        button.disabled = loading;
+      });
+      if (message) {
+        presetStatusBox.textContent = message;
+      }
     }
 
     function authHeaders() {
@@ -1419,6 +1455,8 @@
     }
 
     async function submitAuth(path) {
+      if (authLoading) return;
+
       const login = authLoginInput.value.trim();
       const password = authPasswordInput.value;
       if (!login || !password) {
@@ -1426,7 +1464,7 @@
         return;
       }
 
-      authStatusBox.textContent = "Отправка...";
+      setAuthLoading(true, path === "register" ? "Регистрация..." : "Вход...");
       try {
         const response = await fetchJson(`${API_BASE}/auth/${path}`, {
           method: "POST",
@@ -1435,9 +1473,11 @@
         });
         setAuthSession(response.token, response.user);
         closeAuthModal();
-        setStatus("Вход выполнен. Следующие расчёты будут сохраняться в наборы весов.");
+        setStatus(path === "register" ? "Аккаунт создан. Можно сохранять наборы весов." : "Вход выполнен. Можно сохранять наборы весов.");
       } catch (error) {
-        authStatusBox.textContent = `Ошибка: ${error.message}`;
+        authStatusBox.textContent = `Ошибка: ${userFriendlyError(error.message)}`;
+      } finally {
+        setAuthLoading(false);
       }
     }
 
@@ -1467,14 +1507,19 @@
     }
 
     async function openPresetModal() {
+      if (presetLoading) return;
+
       presetModal.hidden = false;
-      presetStatusBox.textContent = "";
       presetList.innerHTML = '<div class="empty">Загрузка наборов весов...</div>';
+      setPresetLoading(true, "Загрузка...");
       try {
         const response = await fetchJson(`${API_BASE}/weight-presets/`);
         renderPresets(response.items || []);
+        presetStatusBox.textContent = "";
       } catch (error) {
-        presetList.innerHTML = `<div class="empty">Не удалось загрузить наборы весов: ${escapeHtml(error.message)}</div>`;
+        presetList.innerHTML = `<div class="empty">Не удалось загрузить наборы весов: ${escapeHtml(userFriendlyError(error.message))}</div>`;
+      } finally {
+        setPresetLoading(false);
       }
     }
 
@@ -1483,13 +1528,15 @@
     }
 
     async function saveCurrentPreset() {
+      if (presetLoading) return;
+
       const name = presetNameInput.value.trim();
       if (!name) {
         presetStatusBox.textContent = "Введите название набора.";
         return;
       }
 
-      presetStatusBox.textContent = "Сохранение...";
+      setPresetLoading(true, "Сохранение...");
       try {
         await fetchJson(`${API_BASE}/weight-presets/`, {
           method: "POST",
@@ -1505,7 +1552,9 @@
         const response = await fetchJson(`${API_BASE}/weight-presets/`);
         renderPresets(response.items || []);
       } catch (error) {
-        presetStatusBox.textContent = `Ошибка: ${error.message}`;
+        presetStatusBox.textContent = `Ошибка: ${userFriendlyError(error.message)}`;
+      } finally {
+        setPresetLoading(false);
       }
     }
 
@@ -1542,7 +1591,10 @@
 
       presetList.querySelectorAll("[data-preset-delete]").forEach((button) => {
         button.addEventListener("click", async () => {
-          await deletePreset(button.dataset.presetDelete);
+          const item = items.find((entry) => String(entry.id) === button.dataset.presetDelete);
+          if (item) {
+            await deletePreset(item);
+          }
         });
       });
     }
@@ -1563,13 +1615,20 @@
       setStatus("Набор весов загружен.");
     }
 
-    async function deletePreset(presetID) {
+    async function deletePreset(item) {
+      if (presetLoading) return;
+      if (!window.confirm(`Удалить набор весов "${item.name}"?`)) return;
+
+      setPresetLoading(true, "Удаление...");
       try {
-        await fetchJson(`${API_BASE}/weight-presets/${presetID}`, { method: "DELETE" });
+        await fetchJson(`${API_BASE}/weight-presets/${item.id}`, { method: "DELETE" });
         const response = await fetchJson(`${API_BASE}/weight-presets/`);
         renderPresets(response.items || []);
+        presetStatusBox.textContent = "Набор весов удалён.";
       } catch (error) {
-        presetStatusBox.textContent = `Ошибка удаления: ${error.message}`;
+        presetStatusBox.textContent = `Ошибка удаления: ${userFriendlyError(error.message)}`;
+      } finally {
+        setPresetLoading(false);
       }
     }
 

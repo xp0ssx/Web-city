@@ -85,6 +85,10 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	user, token, err := h.store.CreateUser(r.Context(), req.Login, req.Password)
 	if err != nil {
+		if errors.Is(err, store.ErrLoginTaken) {
+			writeError(w, http.StatusConflict, "login already exists")
+			return
+		}
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}

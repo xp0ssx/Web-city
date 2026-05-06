@@ -9,7 +9,7 @@ import (
 	"web-city/updater/pipelines"
 )
 
-const allowedModes = "osm-raw | osm | map-layers | tile-cache | datamos | static | all"
+const allowedModes = "osm-raw | osm | map-layers | tile-cache | datamos | static | all | monthly"
 
 func main() {
 	mode := strings.ToLower(strings.TrimSpace(getEnv("UPDATER_MODE", "")))
@@ -43,9 +43,22 @@ func main() {
 		runDataMos()
 		runStatic()
 
+	case "monthly":
+		runMonthly()
+
 	default:
 		log.Fatalf("invalid UPDATER_MODE=%s (allowed: %s)", mode, allowedModes)
 	}
+}
+
+func runMonthly() {
+	log.Println("starting monthly update pipeline")
+	runOSMRaw()
+	runOSM()
+	runMapLayers()
+	runDataMos()
+	runStatic()
+	log.Println("monthly update pipeline done")
 }
 
 func runOSMRaw() {

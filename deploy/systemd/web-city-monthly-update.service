@@ -1,0 +1,12 @@
+[Unit]
+Description=Web-city monthly data update
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/denis/Web-city
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/env docker compose --profile tools run --rm -e UPDATER_MODE=monthly updater
+TimeoutStartSec=infinity
