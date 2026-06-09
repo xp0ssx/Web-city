@@ -45,6 +45,12 @@ func (s *Store) BaseTilePaths(ctx context.Context, z, x, y int) ([]TilePath, err
 			WHERE $1 >= 8
 				AND a.geom && b.tile_4326
 				AND a.subcategory IN ('water_bodies', 'parks_greenery', 'natural_greenery')
+				AND (
+					$1 >= 12
+					OR ($1 = 11 AND a.area_m2 >= 5000)
+					OR ($1 = 10 AND a.area_m2 >= 10000)
+					OR ($1 <= 9 AND a.area_m2 >= 50000)
+				)
 		),
 		area_paths AS (
 			SELECT
@@ -72,9 +78,10 @@ func (s *Store) BaseTilePaths(ctx context.Context, z, x, y int) ([]TilePath, err
 					),
 					GREATEST(
 						CASE
-							WHEN $1 <= 10 THEN b.pixel_size * 3.0
-							WHEN $1 = 11 THEN b.pixel_size * 2.0
-							WHEN $1 = 12 THEN b.pixel_size
+							WHEN $1 <= 9 THEN b.pixel_size * 8.0
+							WHEN $1 = 10 THEN b.pixel_size * 5.0
+							WHEN $1 = 11 THEN b.pixel_size * 3.0
+							WHEN $1 = 12 THEN b.pixel_size * 1.5
 							ELSE b.pixel_size * 0.5
 						END,
 						1.0

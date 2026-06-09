@@ -72,7 +72,7 @@ Backend:
 Frontend:
 
 - HTML/CSS/JavaScript без сборщика;
-- Leaflet;
+- OpenLayers;
 - Nginx.
 
 Data pipeline:
@@ -99,7 +99,7 @@ Infrastructure:
 | --- | --- |
 | `postgis` | PostgreSQL 16 + PostGIS. Хранит геоданные, экономические показатели, пользователей, сессии и сохраненные веса. |
 | `api` | Go REST API. Выполняет расчет оценки, авторизацию, выдачу инфраструктурных данных и генерацию SVG-тайлов. |
-| `frontend` | Nginx. Отдает SPA-интерфейс, локальный Leaflet, проксирует API и обслуживает кэшированные тайлы. |
+| `frontend` | Nginx. Отдает SPA-интерфейс, локальный OpenLayers, проксирует API и обслуживает кэшированные тайлы. |
 | `updater` | Go-сервис загрузки и обновления DataMos, OSM, статических границ, экономических данных и слоев карты. |
 
 Схема взаимодействия:
@@ -278,7 +278,7 @@ Score = sum(K_i * W_i) / sum(W_i)
 
 Используются:
 
-- Leaflet из локальных файлов;
+- OpenLayers из локальных файлов;
 - SVG-тайлы, генерируемые API;
 - данные дорог, зданий, границ, зеленых и водных зон из PostGIS;
 - nginx lazy-cache.
@@ -448,7 +448,7 @@ api/                  Go REST API
 frontend/             статический SPA и nginx config
   index.html          основной интерфейс
   debug.html          отладочная страница
-  vendor/leaflet      локальный Leaflet
+  vendor/openlayers   локальный OpenLayers
 
 updater/              сервис обновления данных
   config/             DataMos и OSM правила

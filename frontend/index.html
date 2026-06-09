@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Web-city</title>
-  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="/vendor/openlayers/ol.css" />
   <style>
     :root {
       color-scheme: light;
@@ -784,8 +784,41 @@
       background-size: 56px 56px;
     }
 
-    .leaflet-control-attribution {
+    .ol-attribution {
       font-size: 10px;
+    }
+
+    .map-popup {
+      position: relative;
+      min-width: 220px;
+      max-width: 300px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.22);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .map-popup[hidden] {
+      display: none;
+    }
+
+    .map-popup-close {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .map-popup-content {
+      padding-right: 14px;
     }
 
     @media (max-width: 920px) {
@@ -983,40 +1016,225 @@
     </div>
   </div>
 
-  <script src="/vendor/leaflet/leaflet.js"></script>
+  <script src="/vendor/openlayers/ol.js"></script>
   <script>
     const API_BASE = "/api/v1";
     const TILE_URL = "/tiles/base/{z}/{x}/{y}.svg?v=4";
     const MOSCOW_BOUNDS = [[55.097, 36.722], [56.066, 38.048]];
+    const MOSCOW_EXTENT = ol.proj.transformExtent(
+      [MOSCOW_BOUNDS[0][1], MOSCOW_BOUNDS[0][0], MOSCOW_BOUNDS[1][1], MOSCOW_BOUNDS[1][0]],
+      "EPSG:4326",
+      "EPSG:3857"
+    );
+    const geoJSONFormat = new ol.format.GeoJSON();
 
-    const map = L.map("map", {
-      zoomControl: true,
-      attributionControl: true,
-      maxBounds: MOSCOW_BOUNDS,
-      maxBoundsViscosity: 1.0,
-      minZoom: 9,
-      maxZoom: 19,
-      preferCanvas: true
-    }).setView([55.751244, 37.618423], 10);
-
-    map.attributionControl.setPrefix(false);
-
-    if (TILE_URL) {
-      L.tileLayer(TILE_URL, {
+    const tileLayer = new ol.layer.Tile({
+      preload: 1,
+      source: new ol.source.XYZ({
+        url: TILE_URL,
+        minZoom: 9,
         maxZoom: 19,
-        bounds: MOSCOW_BOUNDS,
-        noWrap: true,
-        updateWhenIdle: true,
-        keepBuffer: 1,
-        attribution: "Локальная подложка: OSM/PostGIS"
-      }).addTo(map);
-    } else {
-      map.attributionControl.addAttribution("Локальная подложка: границы Москвы");
+        attributions: "Локальная подложка: OSM/PostGIS",
+        cacheSize: 256,
+        interpolate: false,
+        wrapX: false,
+        transition: 0
+      })
+    });
+    const boundarySource = new ol.source.Vector();
+    const selectionSource = new ol.source.Vector();
+    const usedObjectsSource = new ol.source.Vector();
+
+    const boundaryLayer = new ol.layer.VectorImage({
+      source: boundarySource,
+      imageRatio: 1,
+      updateWhileAnimating: false,
+      updateWhileInteracting: false
+    });
+    const selectionLayer = new ol.layer.Vector({
+      source: selectionSource,
+      renderBuffer: 32,
+      updateWhileAnimating: false,
+      updateWhileInteracting: false
+    });
+    const usedObjectsLayer = new ol.layer.Vector({
+      source: usedObjectsSource,
+      renderBuffer: 32,
+      updateWhileAnimating: false,
+      updateWhileInteracting: false
+    });
+
+    const popupElement = document.createElement("div");
+    popupElement.className = "map-popup";
+    popupElement.hidden = true;
+    popupElement.innerHTML = '<button class="map-popup-close" type="button" aria-label="Закрыть">×</button><div class="map-popup-content"></div>';
+    document.body.appendChild(popupElement);
+    const popupContent = popupElement.querySelector(".map-popup-content");
+    const popupOverlay = new ol.Overlay({
+      element: popupElement,
+      positioning: "bottom-center",
+      stopEvent: true,
+      offset: [0, -10]
+    });
+    popupElement.querySelector(".map-popup-close").addEventListener("click", () => {
+      popupElement.hidden = true;
+      popupOverlay.setPosition(undefined);
+    });
+
+    const map = new ol.Map({
+      target: "map",
+      layers: [tileLayer, boundaryLayer, selectionLayer, usedObjectsLayer],
+      overlays: [popupOverlay],
+      view: new ol.View({
+        center: ol.proj.fromLonLat([37.618423, 55.751244]),
+        zoom: 10,
+        minZoom: 9,
+        maxZoom: 19,
+        extent: MOSCOW_EXTENT
+      })
+    });
+
+    function latLng(lat, lng) {
+      return { lat: Number(lat), lng: Number(lng) };
     }
 
-    const boundaryLayer = L.layerGroup().addTo(map);
-    const selectionLayer = L.layerGroup().addTo(map);
-    const usedObjectsLayer = L.layerGroup().addTo(map);
+    function coordinateFromLatLng(point) {
+      return ol.proj.fromLonLat([point.lng, point.lat]);
+    }
+
+    function latLngFromCoordinate(coordinate) {
+      const [lon, lat] = ol.proj.toLonLat(coordinate);
+      return latLng(lat, lon);
+    }
+
+    function setMapView(point, zoom) {
+      map.getView().animate({
+        center: coordinateFromLatLng(point),
+        zoom,
+        duration: 200
+      });
+    }
+
+    function mapZoom() {
+      return map.getView().getZoom() || 10;
+    }
+
+    function clearVectorLayer(source) {
+      source.clear();
+    }
+
+    function readGeoJSONFeatures(geojson) {
+      const input = geojson?.type && geojson.type !== "Feature" && geojson.type !== "FeatureCollection"
+        ? { type: "Feature", properties: {}, geometry: geojson }
+        : geojson;
+      return geoJSONFormat.readFeatures(input, {
+        dataProjection: "EPSG:4326",
+        featureProjection: "EPSG:3857"
+      });
+    }
+
+    function showMapPopup(coordinate, html) {
+      popupContent.innerHTML = html;
+      popupElement.hidden = false;
+      popupOverlay.setPosition(coordinate);
+    }
+
+    function circleStyle({ radius, stroke, strokeWidth = 2, fill, text = "", textColor = "#fff" }) {
+      return new ol.style.Style({
+        image: new ol.style.Circle({
+          radius,
+          fill: new ol.style.Fill({ color: fill }),
+          stroke: new ol.style.Stroke({ color: stroke, width: strokeWidth })
+        }),
+        text: text
+          ? new ol.style.Text({
+              text,
+              fill: new ol.style.Fill({ color: textColor }),
+              font: "700 13px Arial, sans-serif"
+            })
+          : undefined
+      });
+    }
+
+    function geometryStyle({ stroke, strokeWidth = 2, fill }) {
+      return new ol.style.Style({
+        stroke: new ol.style.Stroke({ color: stroke, width: strokeWidth }),
+        fill: new ol.style.Fill({ color: fill })
+      });
+    }
+
+    function createPointFeature(point, style, onClick = null) {
+      const feature = new ol.Feature({
+        geometry: new ol.geom.Point(coordinateFromLatLng(point))
+      });
+      feature.setStyle(style);
+      if (onClick) feature.set("onClick", onClick);
+      return feature;
+    }
+
+    function createRadiusFeature(point, radius, style) {
+      const feature = new ol.Feature({
+        geometry: new ol.geom.Circle(coordinateFromLatLng(point), radius)
+      });
+      feature.setStyle(style);
+      return feature;
+    }
+
+    function fitToExtent(extent, maxZoom = 17) {
+      if (ol.extent.isEmpty(extent)) return;
+      map.getView().fit(extent, {
+        padding: [64, 64, 64, 64],
+        maxZoom,
+        duration: 250
+      });
+    }
+
+    const styles = {
+      boundaryMunicipality: geometryStyle({
+        stroke: "#8a99ad",
+        strokeWidth: 1,
+        fill: "rgba(219, 229, 240, 0.02)"
+      }),
+      boundaryAdmArea: geometryStyle({
+        stroke: "#415168",
+        strokeWidth: 2,
+        fill: "rgba(0, 0, 0, 0)"
+      }),
+      selectedRadius: geometryStyle({
+        stroke: "#1f6feb",
+        strokeWidth: 2,
+        fill: "rgba(31, 111, 235, 0.08)"
+      }),
+      selectedPoint: circleStyle({
+        radius: 7,
+        stroke: "#fff",
+        strokeWidth: 2,
+        fill: "#1f6feb"
+      }),
+      comparePoint: (text, active) => circleStyle({
+        radius: 14,
+        stroke: "#fff",
+        strokeWidth: 2,
+        fill: active ? "#1f6feb" : "#415168",
+        text
+      }),
+      usedObject: circleStyle({
+        radius: 6,
+        stroke: "#c2410c",
+        strokeWidth: 2,
+        fill: "#f97316"
+      }),
+      usedArea: geometryStyle({
+        stroke: "#15803d",
+        strokeWidth: 2,
+        fill: "rgba(34, 197, 94, 0.22)"
+      }),
+      highlightedMunicipality: geometryStyle({
+        stroke: "#1f6feb",
+        strokeWidth: 3,
+        fill: "rgba(31, 111, 235, 0.09)"
+      })
+    };
 
     const profileInput = document.getElementById("profileInput");
     const radiusInput = document.getElementById("radiusInput");
@@ -1723,8 +1941,8 @@
       updateWeightsState();
 
       if (Number.isFinite(lat) && Number.isFinite(lon) && lat >= 55.097 && lat <= 56.066 && lon >= 36.722 && lon <= 38.048) {
-        setSelectedPoint(L.latLng(lat, lon), false);
-        map.setView(selectedPoint, Math.max(map.getZoom(), 13));
+        setSelectedPoint(latLng(lat, lon), false);
+        setMapView(selectedPoint, Math.max(mapZoom(), 13));
         return true;
       }
 
@@ -1821,25 +2039,13 @@
       ]);
       municipalityGeoJSON = mo;
 
-      L.geoJSON(mo, {
-        style: {
-          color: "#8a99ad",
-          weight: 1,
-          fillOpacity: 0.02,
-          fillColor: "#dbe5f0"
-        },
-        onEachFeature: (feature, layer) => {
-          layer.bindTooltip(feature.properties?.NAME || "", { sticky: true });
-        }
-      }).addTo(boundaryLayer);
+      const municipalityFeatures = readGeoJSONFeatures(mo);
+      municipalityFeatures.forEach((feature) => feature.setStyle(styles.boundaryMunicipality));
+      boundarySource.addFeatures(municipalityFeatures);
 
-      L.geoJSON(ao, {
-        style: {
-          color: "#415168",
-          weight: 2,
-          fillOpacity: 0
-        }
-      }).addTo(boundaryLayer);
+      const admAreaFeatures = readGeoJSONFeatures(ao);
+      admAreaFeatures.forEach((feature) => feature.setStyle(styles.boundaryAdmArea));
+      boundarySource.addFeatures(admAreaFeatures);
     }
 
     async function loadAssessmentConfig() {
@@ -1851,34 +2057,20 @@
       updateWeightsState();
     }
 
-    function comparisonMarkerIcon(point) {
-      const active = point.id === activeComparisonPointId;
-      return L.divIcon({
-        className: "",
-        html: `<div class="compare-marker${active ? " active" : ""}">${comparisonPointIndex(point.id) + 1}</div>`,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14]
-      });
-    }
-
     function renderSelection() {
-      selectionLayer.clearLayers();
+      clearVectorLayer(selectionSource);
       if (isCompareMode()) {
         const radius = selectedRadius();
         comparisonPoints.forEach((point) => {
           const active = point.id === activeComparisonPointId;
           if (active) {
-            L.circle(point.latlng, {
-              radius,
-              color: "#1f6feb",
-              weight: 2,
-              fillColor: "#1f6feb",
-              fillOpacity: 0.08
-            }).addTo(selectionLayer);
+            selectionSource.addFeature(createRadiusFeature(point.latlng, radius, styles.selectedRadius));
           }
-          L.marker(point.latlng, { icon: comparisonMarkerIcon(point) })
-            .addTo(selectionLayer)
-            .on("click", () => selectComparisonPoint(point.id));
+          selectionSource.addFeature(createPointFeature(
+            point.latlng,
+            styles.comparePoint(String(comparisonPointIndex(point.id) + 1), active),
+            () => selectComparisonPoint(point.id)
+          ));
         });
         return;
       }
@@ -1886,15 +2078,8 @@
       if (!selectedPoint) return;
 
       const radius = selectedRadius();
-      L.circle(selectedPoint, {
-        radius,
-        color: "#1f6feb",
-        weight: 2,
-        fillColor: "#1f6feb",
-        fillOpacity: 0.08
-      }).addTo(selectionLayer);
-
-      L.marker(selectedPoint).addTo(selectionLayer);
+      selectionSource.addFeature(createRadiusFeature(selectedPoint, radius, styles.selectedRadius));
+      selectionSource.addFeature(createPointFeature(selectedPoint, styles.selectedPoint));
     }
 
     function buildAssessmentRequestBody(latlng) {
@@ -1925,7 +2110,7 @@
       const requestId = ++evaluationRequestId;
       renderSelection();
       setStatus("Расчёт оценки...");
-      usedObjectsLayer.clearLayers();
+      clearVectorLayer(usedObjectsSource);
 
       try {
         const nextAssessment = await fetchJson(`${API_BASE}/assessments/evaluate`, {
@@ -1991,7 +2176,7 @@
       selectedPoint = null;
       assessment = null;
       clearDrilldownSelection();
-      usedObjectsLayer.clearLayers();
+      clearVectorLayer(usedObjectsSource);
       updateSelectionControls();
       renderSelection();
       highlightMunicipality();
@@ -2072,7 +2257,7 @@
 
     function highlightMunicipality() {
       if (highlightedMunicipality) {
-        highlightedMunicipality.remove();
+        selectionSource.removeFeature(highlightedMunicipality);
         highlightedMunicipality = null;
       }
       const name = assessment?.municipality?.name;
@@ -2081,14 +2266,11 @@
       const feature = municipalityGeoJSON.features.find((item) => item.properties?.NAME === name);
       if (!feature) return;
 
-      highlightedMunicipality = L.geoJSON(feature, {
-        style: {
-          color: "#1f6feb",
-          weight: 3,
-          fillColor: "#1f6feb",
-          fillOpacity: 0.09
-        }
-      }).addTo(selectionLayer);
+      const [highlightFeature] = readGeoJSONFeatures(feature);
+      if (!highlightFeature) return;
+      highlightFeature.setStyle(styles.highlightedMunicipality);
+      highlightedMunicipality = highlightFeature;
+      selectionSource.addFeature(highlightedMunicipality);
     }
 
     function renderAssessment() {
@@ -2412,11 +2594,11 @@
     }
 
     function renderUsedObjects(indicatorId = "") {
-      usedObjectsLayer.clearLayers();
+      clearVectorLayer(usedObjectsSource);
       const indicators = currentVisibleIndicators(indicatorId);
       const seenObjects = new Set();
       const seenAreas = new Set();
-      const bounds = [];
+      const fitExtent = ol.extent.createEmpty();
 
       indicators.forEach((indicator) => {
         const objects = [
@@ -2432,21 +2614,16 @@
           const latlng = objectLatLngFromSelectedPoint(object);
           if (!latlng) return;
 
-          const marker = L.circleMarker(latlng, {
-            radius: 6,
-            color: "#c2410c",
-            weight: 2,
-            fillColor: "#f97316",
-            fillOpacity: 0.82
-          }).addTo(usedObjectsLayer);
-          marker.bindPopup(`
+          const coordinate = coordinateFromLatLng(latlng);
+          const marker = createPointFeature(latlng, styles.usedObject, () => showMapPopup(coordinate, `
             <div style="min-width:220px">
               <div style="font-weight:700;margin-bottom:5px">${escapeHtml(object.name)}</div>
               <div>${escapeHtml(object.object_type)}</div>
               <div>Расстояние: ${Math.round(object.distance_m).toLocaleString("ru-RU")} м</div>
             </div>
-          `);
-          bounds.push(latlng);
+          `));
+          usedObjectsSource.addFeature(marker);
+          ol.extent.extendCoordinate(fitExtent, coordinate);
         });
 
         const areas = Array.isArray(indicator.used_areas) ? indicator.used_areas : [];
@@ -2458,37 +2635,33 @@
           const geometry = areaGeometryFromResponse(area);
           if (!geometry) return;
 
-          const layer = L.geoJSON(geometry, {
-            style: {
-              color: "#15803d",
-              weight: 2,
-              fillColor: "#22c55e",
-              fillOpacity: 0.22
-            }
-          }).addTo(usedObjectsLayer);
-          layer.bindPopup(`
-            <div style="min-width:220px">
-              <div style="font-weight:700;margin-bottom:5px">${escapeHtml(area.name)}</div>
-              <div>${escapeHtml(area.object_type)}</div>
-              <div>Площадь в радиусе: ${Math.round(area.intersection_m2).toLocaleString("ru-RU")} м²</div>
-            </div>
-          `);
-
-          const layerBounds = layer.getBounds();
-          if (layerBounds.isValid()) {
-            bounds.push(layerBounds.getNorthWest(), layerBounds.getSouthEast());
-          }
+          const features = readGeoJSONFeatures(geometry);
+          features.forEach((feature) => {
+            feature.setStyle(styles.usedArea);
+            feature.set("onClick", (event) => showMapPopup(event.coordinate, `
+              <div style="min-width:220px">
+                <div style="font-weight:700;margin-bottom:5px">${escapeHtml(area.name)}</div>
+                <div>${escapeHtml(area.object_type)}</div>
+                <div>Площадь в радиусе: ${Math.round(area.intersection_m2).toLocaleString("ru-RU")} м²</div>
+              </div>
+            `));
+            ol.extent.extend(fitExtent, feature.getGeometry().getExtent());
+          });
+          usedObjectsSource.addFeatures(features);
         });
       });
 
-      if (bounds.length && indicatorId) {
-        map.fitBounds(L.latLngBounds(bounds.concat(selectedPoint ? [selectedPoint] : [])).pad(0.18));
+      if (!ol.extent.isEmpty(fitExtent) && selectedPoint) {
+        ol.extent.extendCoordinate(fitExtent, coordinateFromLatLng(selectedPoint));
+      }
+      if (!ol.extent.isEmpty(fitExtent) && indicatorId) {
+        fitToExtent(fitExtent);
       }
     }
 
     function objectLatLngFromSelectedPoint(object) {
       if (Number.isFinite(object.lat) && Number.isFinite(object.lon)) {
-        return L.latLng(object.lat, object.lon);
+        return latLng(object.lat, object.lon);
       }
       return null;
     }
@@ -2511,11 +2684,26 @@
       return objects + areas;
     }
 
-    map.on("click", (event) => {
+    map.on("singleclick", (event) => {
+      let handled = false;
+      map.forEachFeatureAtPixel(event.pixel, (feature) => {
+        const onClick = feature.get("onClick");
+        if (typeof onClick === "function") {
+          onClick(event);
+          handled = true;
+          return true;
+        }
+        return false;
+      }, { hitTolerance: 5 });
+      if (handled) return;
+
+      popupElement.hidden = true;
+      popupOverlay.setPosition(undefined);
+      const point = latLngFromCoordinate(event.coordinate);
       if (isCompareMode()) {
-        addComparisonPoint(event.latlng);
+        addComparisonPoint(point);
       } else {
-        setSelectedPoint(event.latlng);
+        setSelectedPoint(point);
         evaluateSelectedPoint();
       }
     });
@@ -2533,7 +2721,7 @@
     modeInput.addEventListener("change", () => {
       evaluationRequestId += 1;
       clearDrilldownSelection();
-      usedObjectsLayer.clearLayers();
+      clearVectorLayer(usedObjectsSource);
       if (isCompareMode()) {
         if (selectedPoint && !comparisonPoints.length) {
           comparisonPoints.push({
