@@ -27,6 +27,9 @@ const (
 
 	maxUsedObjects = 100
 	maxUsedAreas   = 50
+
+	generalProfileID    = "general"
+	generalProfileTitle = "Общий профиль"
 )
 
 type Service struct {
@@ -89,6 +92,7 @@ type EvaluateRequest struct {
 	Lon                      float64                       `json:"lon"`
 	Profile                  string                        `json:"profile"`
 	RadiusM                  float64                       `json:"radius_m"`
+	ProfileWeightsPercent    map[string]float64            `json:"profile_weights_percent"`
 	GroupWeightsPercent      map[string]float64            `json:"group_weights_percent"`
 	SectionWeightsPercent    map[string]map[string]float64 `json:"section_weights_percent"`
 	SubsectionWeightsPercent map[string]map[string]float64 `json:"subsection_weights_percent"`
@@ -104,6 +108,7 @@ type AssessmentConfigResponse struct {
 type AssessmentProfileInfo struct {
 	ID                       string                        `json:"id"`
 	Title                    string                        `json:"title"`
+	ProfileWeightsPercent    map[string]float64            `json:"profile_weights_percent,omitempty"`
 	GroupWeightsPercent      map[string]float64            `json:"group_weights_percent"`
 	SectionWeightsPercent    map[string]map[string]float64 `json:"section_weights_percent"`
 	SubsectionWeightsPercent map[string]map[string]float64 `json:"subsection_weights_percent"`
@@ -149,12 +154,20 @@ type EvaluationResult struct {
 	WeightsMode      string                     `json:"weights_mode"`
 	BaseProfile      string                     `json:"base_profile,omitempty"`
 	BaseProfileTitle string                     `json:"base_profile_title,omitempty"`
+	ProfileScores    []ProfileScoreResult       `json:"profile_scores,omitempty"`
 	Lat              float64                    `json:"lat"`
 	Lon              float64                    `json:"lon"`
 	RadiusM          float64                    `json:"radius_m"`
 	Municipality     *store.MunicipalityContext `json:"municipality,omitempty"`
 	Groups           []GroupResult              `json:"groups"`
 	Indicators       []IndicatorResult          `json:"indicators"`
+}
+
+type ProfileScoreResult struct {
+	Profile      string   `json:"profile"`
+	ProfileTitle string   `json:"profile_title"`
+	Weight       float64  `json:"weight"`
+	Score        *float64 `json:"score"`
 }
 
 type GroupResult struct {
@@ -267,12 +280,20 @@ func (s *Service) Evaluate(ctx context.Context, req EvaluateRequest) (Evaluation
 		req.Profile = s.weights.DefaultProfileID
 	}
 
+	if req.Profile == generalProfileID {
+		return s.evaluateGeneralProfile(ctx, req)
+	}
+	if len(req.ProfileWeightsPercent) > 0 {
+		return EvaluationResult{}, RequestError{Message: "profile weights can be used only with general profile"}
+	}
+
+	customWeightsUsed := hasTreeCustomWeights(req)
 	profile, ok := s.profileByID[req.Profile]
 	if !ok {
 		return EvaluationResult{}, RequestError{Message: "unknown assessment profile"}
 	}
 	evalWeights := s.evaluationWeights(profile)
-	customWeightsUsed := hasCustomWeights(req)
+
 	if len(req.GroupWeightsPercent) > 0 {
 		groupWeights, err := customPercentWeights("custom group weights", req.GroupWeightsPercent, evalWeights.GroupWeights)
 		if err != nil {
@@ -339,13 +360,9 @@ func (s *Service) Evaluate(ctx context.Context, req EvaluateRequest) (Evaluation
 	}
 	result.Municipality = municipality
 
-	indicators := make([]IndicatorResult, 0, len(s.config.Indicators))
-	for _, indicator := range s.config.Indicators {
-		item, err := s.evaluateIndicator(ctx, indicator, evalWeights, req.Lon, req.Lat, radiusM, municipality)
-		if err != nil {
-			return EvaluationResult{}, fmt.Errorf("evaluate indicator %s failed: %w", indicator.ID, err)
-		}
-		indicators = append(indicators, item)
+	indicators, err := s.evaluateIndicators(ctx, evalWeights, req.Lon, req.Lat, radiusM, municipality)
+	if err != nil {
+		return EvaluationResult{}, err
 	}
 
 	result.Indicators = indicators
@@ -355,8 +372,123 @@ func (s *Service) Evaluate(ctx context.Context, req EvaluateRequest) (Evaluation
 	return result, nil
 }
 
+func (s *Service) evaluateGeneralProfile(ctx context.Context, req EvaluateRequest) (EvaluationResult, error) {
+	if hasTreeCustomWeights(req) {
+		return EvaluationResult{}, RequestError{Message: "general profile supports only profile weights"}
+	}
+	if err := validatePoint(req.Lon, req.Lat); err != nil {
+		return EvaluationResult{}, err
+	}
+
+	radiusM := req.RadiusM
+	if radiusM <= 0 {
+		radiusM = defaultRadiusM
+	}
+	if radiusM > maxRadiusM {
+		radiusM = maxRadiusM
+	}
+
+	municipality, err := s.store.FindMunicipalityByPoint(ctx, req.Lon, req.Lat)
+	if err != nil {
+		if errors.Is(err, store.ErrNotFound) {
+			return EvaluationResult{}, RequestError{Message: "point is outside Moscow boundaries"}
+		}
+		return EvaluationResult{}, fmt.Errorf("find municipality failed: %w", err)
+	}
+
+	generalWeights := s.generalEvaluationWeights()
+	measuredIndicators, err := s.evaluateIndicators(ctx, generalWeights, req.Lon, req.Lat, radiusM, municipality)
+	if err != nil {
+		return EvaluationResult{}, err
+	}
+
+	profileWeights := s.defaultGeneralProfileWeights()
+	weightsMode := "profile"
+	if len(req.ProfileWeightsPercent) > 0 {
+		profileWeights, err = customPercentWeights("custom profile weights", req.ProfileWeightsPercent, profileWeights)
+		if err != nil {
+			return EvaluationResult{}, err
+		}
+		weightsMode = "custom"
+	}
+
+	profileScores := make([]ProfileScoreResult, 0, len(s.weights.Profiles))
+	sum := 0.0
+	weightSum := 0.0
+
+	for _, profile := range s.weights.Profiles {
+		weights := s.evaluationWeights(profile)
+		indicators := indicatorsWithWeights(measuredIndicators, weights)
+		groups := groupIndicators(indicators, weights)
+		score := aggregateGroupScores(groups)
+		profileWeight := profileWeights[profile.ID]
+
+		profileScores = append(profileScores, ProfileScoreResult{
+			Profile:      weights.ID,
+			ProfileTitle: weights.Title,
+			Weight:       round(profileWeight, 4),
+			Score:        score,
+		})
+
+		if score != nil {
+			sum += *score * profileWeight
+			weightSum += profileWeight
+		}
+	}
+
+	resultIndicators := indicatorsWithWeights(measuredIndicators, generalWeights)
+	result := EvaluationResult{
+		Profile:       generalProfileID,
+		ProfileTitle:  generalProfileTitle,
+		WeightsMode:   weightsMode,
+		ProfileScores: profileScores,
+		Lat:           req.Lat,
+		Lon:           req.Lon,
+		RadiusM:       radiusM,
+		Municipality:  municipality,
+		Indicators:    resultIndicators,
+		Groups:        groupIndicators(resultIndicators, generalWeights),
+	}
+	if weightSum > 0 {
+		result.Score = floatPtr(round(sum/weightSum, 2))
+	}
+
+	return result, nil
+}
+
+func (s *Service) evaluateIndicators(
+	ctx context.Context,
+	weights evaluationWeights,
+	lon float64,
+	lat float64,
+	radiusM float64,
+	municipality *store.MunicipalityContext,
+) ([]IndicatorResult, error) {
+	indicators := make([]IndicatorResult, 0, len(s.config.Indicators))
+	for _, indicator := range s.config.Indicators {
+		item, err := s.evaluateIndicator(ctx, indicator, weights, lon, lat, radiusM, municipality)
+		if err != nil {
+			return nil, fmt.Errorf("evaluate indicator %s failed: %w", indicator.ID, err)
+		}
+		indicators = append(indicators, item)
+	}
+
+	return indicators, nil
+}
+
 func (s *Service) ConfigResponse() AssessmentConfigResponse {
-	profiles := make([]AssessmentProfileInfo, 0, len(s.weights.Profiles))
+	profiles := make([]AssessmentProfileInfo, 0, len(s.weights.Profiles)+1)
+	generalWeights := s.generalEvaluationWeights()
+	profiles = append(profiles, AssessmentProfileInfo{
+		ID:                       generalWeights.ID,
+		Title:                    generalWeights.Title,
+		ProfileWeightsPercent:    percentMap(s.defaultGeneralProfileWeights()),
+		GroupWeightsPercent:      percentMap(generalWeights.GroupWeights),
+		SectionWeightsPercent:    nestedPercentMap(generalWeights.SectionWeights),
+		SubsectionWeightsPercent: nestedPercentMap(generalWeights.SubsectionWeights),
+		IndicatorWeightsPercent:  nestedPercentMap(generalWeights.IndicatorWeights),
+	})
+
 	for _, profile := range s.weights.Profiles {
 		weights := s.evaluationWeights(profile)
 		profiles = append(profiles, AssessmentProfileInfo{
@@ -723,6 +855,9 @@ func validateWeightsConfig(config WeightsConfig) error {
 	if strings.TrimSpace(config.DefaultProfileID) == "" {
 		return fmt.Errorf("assessment weights default_profile_id is empty")
 	}
+	if config.DefaultProfileID == generalProfileID {
+		return fmt.Errorf("assessment weights default_profile_id %s is reserved", generalProfileID)
+	}
 	if len(config.Profiles) == 0 {
 		return fmt.Errorf("assessment weights has no profiles")
 	}
@@ -739,6 +874,9 @@ func validateWeightsConfig(config WeightsConfig) error {
 		profile.ID = strings.TrimSpace(profile.ID)
 		if profile.ID == "" {
 			return fmt.Errorf("assessment weights profile has empty id")
+		}
+		if profile.ID == generalProfileID {
+			return fmt.Errorf("assessment weights profile id %s is reserved", generalProfileID)
 		}
 		if _, ok := ids[profile.ID]; ok {
 			return fmt.Errorf("duplicate assessment weights profile id %s", profile.ID)
@@ -892,7 +1030,7 @@ func profileMap(config WeightsConfig) map[string]ProfileWeights {
 	return result
 }
 
-func hasCustomWeights(req EvaluateRequest) bool {
+func hasTreeCustomWeights(req EvaluateRequest) bool {
 	return len(req.GroupWeightsPercent) > 0 ||
 		len(req.SectionWeightsPercent) > 0 ||
 		len(req.SubsectionWeightsPercent) > 0 ||
@@ -999,6 +1137,103 @@ func (s *Service) evaluationWeights(profile ProfileWeights) evaluationWeights {
 	}
 
 	return weights
+}
+
+func (s *Service) generalEvaluationWeights() evaluationWeights {
+	profiles := make([]evaluationWeights, 0, len(s.weights.Profiles))
+	for _, profile := range s.weights.Profiles {
+		profiles = append(profiles, s.evaluationWeights(profile))
+	}
+
+	return evaluationWeights{
+		ID:                generalProfileID,
+		Title:             generalProfileTitle,
+		GroupWeights:      averageWeightMap(extractWeightMaps(profiles, func(item evaluationWeights) map[string]float64 { return item.GroupWeights })),
+		SectionWeights:    averageNestedWeightMap(extractNestedWeightMaps(profiles, func(item evaluationWeights) map[string]map[string]float64 { return item.SectionWeights })),
+		SubsectionWeights: averageNestedWeightMap(extractNestedWeightMaps(profiles, func(item evaluationWeights) map[string]map[string]float64 { return item.SubsectionWeights })),
+		IndicatorWeights:  averageNestedWeightMap(extractNestedWeightMaps(profiles, func(item evaluationWeights) map[string]map[string]float64 { return item.IndicatorWeights })),
+	}
+}
+
+func (s *Service) defaultGeneralProfileWeights() map[string]float64 {
+	result := make(map[string]float64, len(s.weights.Profiles))
+	if len(s.weights.Profiles) == 0 {
+		return result
+	}
+
+	weight := 1.0 / float64(len(s.weights.Profiles))
+	for _, profile := range s.weights.Profiles {
+		result[profile.ID] = weight
+	}
+	return result
+}
+
+func extractWeightMaps(items []evaluationWeights, pick func(evaluationWeights) map[string]float64) []map[string]float64 {
+	result := make([]map[string]float64, 0, len(items))
+	for _, item := range items {
+		result = append(result, pick(item))
+	}
+	return result
+}
+
+func extractNestedWeightMaps(items []evaluationWeights, pick func(evaluationWeights) map[string]map[string]float64) []map[string]map[string]float64 {
+	result := make([]map[string]map[string]float64, 0, len(items))
+	for _, item := range items {
+		result = append(result, pick(item))
+	}
+	return result
+}
+
+func averageWeightMap(items []map[string]float64) map[string]float64 {
+	result := make(map[string]float64)
+	if len(items) == 0 {
+		return result
+	}
+
+	for _, item := range items {
+		for key, value := range item {
+			result[key] += value
+		}
+	}
+	for key := range result {
+		result[key] /= float64(len(items))
+	}
+
+	return result
+}
+
+func averageNestedWeightMap(items []map[string]map[string]float64) map[string]map[string]float64 {
+	result := make(map[string]map[string]float64)
+	if len(items) == 0 {
+		return result
+	}
+
+	for _, item := range items {
+		for parentID, values := range item {
+			if result[parentID] == nil {
+				result[parentID] = make(map[string]float64)
+			}
+			for childID, value := range values {
+				result[parentID][childID] += value
+			}
+		}
+	}
+	for parentID := range result {
+		for childID := range result[parentID] {
+			result[parentID][childID] /= float64(len(items))
+		}
+	}
+
+	return result
+}
+
+func indicatorsWithWeights(indicators []IndicatorResult, weights evaluationWeights) []IndicatorResult {
+	result := make([]IndicatorResult, 0, len(indicators))
+	for _, indicator := range indicators {
+		indicator.Weight = indicatorWeight(weights, indicator.SubsectionID, indicator.ID)
+		result = append(result, indicator)
+	}
+	return result
 }
 
 func cloneWeightMap(weights map[string]float64) map[string]float64 {
